@@ -3,411 +3,263 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-?>
-<!DOCTYPE html>
-<html lang="en">
+require 'vendor/autoload.php';
 
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, viewport-fit=cover,initial-scale=1.0,user-scalable=no" />
-	<title>Apol</title>
-	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-	<style>
-		<?php include 'apol.css'; ?>
-	</style>
-</head>
+use Jenssegers\Blade\Blade;
+use MiladRahimi\PhpRouter\Router;
+use Laminas\Diactoros\Response\JsonResponse;
+use MiladRahimi\PhpRouter\Routing\Route;
+use Laminas\Diactoros\ServerRequest;
 
-<body>
-	<div id="app">
-		<div class="header" v-if="getSubreddit()">
-			<div class="header-action left">
-				<div class="header-action-inner">
-					<button v-if="urlStack.length > 1" v-on:click="reddit.goBack()" v-bind:disabled="loading"><?php include 'img/chevron-left.svg'; ?></button>
-				</div>
-			</div>
-			<div @click="toggleSubRedditSelector()" class="header-title">
-				<div>/r/{{ getSubreddit() }}</div>
-				<div class="icon" v-if="showSubRedditSelector"><?php include 'img/chevron-up.svg'; ?></div>
-				<div class="icon" v-if="!showSubRedditSelector"><?php include 'img/chevron-down.svg'; ?></div>
-			</div>
-			<div class="header-action right">
-				<div class="header-action-inner">
-					<button v-on:click="reddit.reload()" v-bind:disabled="loading"><?php include 'img/refresh-cw.svg'; ?></button>
-				</div>
-			</div>
-		</div>
-		<div class="subreddit-selector" v-if="showSubRedditSelector">
-			<div v-for="subreddit in getSubredditList()" class="subreddit-selector-item" @click="reddit.loadRedditUrl(subreddit.url)">
-				<div>{{subreddit.title}}</div>
-			</div>
-		</div>
-		<div v-if="getStories().length" class="story-list">
-			<div v-for="story in getStories()" class="story" @click="(event) => reddit.goToRedditUrl(story.permalink, event)" v-if="story.title">
-				<div class="story-title">
-					{{story.title}}
-					<span v-if="story.link_flair_text">{{story.link_flair_text}}</span>
-				</div>
-				<div v-if="getPreview(story)" class="story-preview">
-					<!-- <div>{{preview}}</div> -->
-					<img v-bind:src="getPreview(story)" />
-				</div>
-				<div v-if="story.url" class="story-url">
-					<div><?php include 'img/link.svg'; ?></div>
-					<div class="story-url-uri" @click="(event) => reddit.goToUrl(story, event)">
-						<span class="story-url-uri-host">{{stripHost(story.url)}}</span>
-						<span class="story-url-uri-path">{{stripPath(story.url)}}</span>
-					</div>
-					<div><?php include 'img/chevron-right.svg'; ?></div>
-				</div>
-				<div class="meta">
-					<div><?php include 'img/arrow-up.svg'; ?> <span class="val">{{ formatDec(story.ups) }}</span></div>
-					<div><?php include 'img/message-circle.svg'; ?> <span class="val">{{ formatDec(story.num_comments) }}</span></div>
-					<div><?php include 'img/clock.svg'; ?> <span class="val">{{ formatTs(story.created_utc) }}</span></div>
-				</div>
-			</div>
-		</div>
-		<div v-if="comments && comments.length" class="comments-list">
-			<div v-for="comment in comments" class="comment-wrap">
-				<div v-html="recursiveCommentRendering(comment)"></div>
-			</div>
-		</div>
-	</div>
-	<div v-if="loading" class="loading-indicator">Loading…</div>
-	<script>
-		window.toggle = function(el) {
-			el.parentElement.parentElement.classList.toggle('closed');
-		}
+foreach (glob(__DIR__ . '/blade-cache/*.php') as $filename) {
+    unlink($filename);
+}
 
-		class reddit {
-			constructor(ref) {
-				this.ref = ref;
-				this.ref.apiEndpoint = "/api.php";
-			}
-			reload() {
-				this.ref.listing = [];
-				this.ref.comments = [];
-				this.currentUrl = this.getCurrentUrl();
-				this.ref.reddit.loadRedditUrl(this.currentUrl);
-			}
-			goBack() {
-				this.ref.urlStack.pop();
-				this.ref.redditUrl = this.ref.urlStack[this.ref.urlStack.length - 1];
-				this.ref.reddit.loadRedditUrl(this.ref.redditUrl);
-			}
-			goToRedditUrl(redditUrl, e) {
-				e.preventDefault();
-				e.stopPropagation();
-				this.ref.reddit.loadRedditUrl(redditUrl);
-				return false;
-			}
-			goToUrl(story, e) {
-				e.preventDefault();
-				e.stopPropagation();
-				if (story.url ?? false) {
-					window.open(story.url, '_blank');
-				}
-				return false;
-			}
-			addParamsToUrl(params, url) {
-				url = url.replace(".json", "");
-				let urlParts = url.split("?");
-				let urlParams = new URLSearchParams(urlParts[1] ?? "");
-				let newParams = new URLSearchParams(params);
+class Helpers
+{
+    public static function relative_time($unix_ts)
+    {
+        $diff = time() - $unix_ts;
+        if ($diff < 60) {
+            return sprintf('%ds', $diff);
+        } else if ($diff < 3600) {
+            return sprintf('%dm', round($diff / 60));
+        } else if ($diff < 86400) {
+            return sprintf('%dh', round($diff / 3600));
+        } else if ($diff < 604800) {
+            return sprintf('%dd', round($diff / 86400));
+        } else if ($diff < 2419200) {
+            return sprintf('%dw', round($diff / 604800));
+        } else if ($diff < 29030400) {
+            return sprintf('%dM', round($diff / 2419200));
+        } else {
+            return sprintf('%dy', round($diff / 29030400));
+        }
+    }
+    public static function get_next_page($data)
+    {
+        $url = $_SERVER['REQUEST_URI'];
+        $new_url = self::add_or_update_params($url, [
+            [
+                'key' => 'count',
+                'value' => 100,
+            ],
+            [
+                'key' => 'after',
+                'value' => $data['name'],
+            ],
+        ]);
+        return $new_url;
+    }
+    public static function add_or_update_params($url, $params)
+    {
+        $url_parts = parse_url($url);
+        parse_str($url_parts['query'] ?? '', $existing_params);
+        foreach ($params as $param) {
+            $existing_params[$param['key']] = $param['value'];
+        }
+        $query = http_build_query($existing_params);
+        $updated_url = $url_parts['path'] . '?' . $query;
+        return $updated_url;
+    }
+    public static function get_embeddable_picture($data)
+    {
+        $url = $data['url'];
 
-				for (let pair of newParams.entries()) {
-					urlParams.set(pair[0], pair[1]);
-				}
+        if (strpos($url, 'i.redd.it') !== false) {
+            return [
+                'src' => $url
+            ];
+        }
+    }
+    public static function get_tab_bar_items()
+    {
+        return [
+            [
+                'href' => self::get_base_url() . '/r/all',
+                'icon' => __DIR__ . '/img/home.svg',
+                'class' => self::url_includes('r/all') ? 'active' : '',
+                'label' => 'Home',
+            ],
+            [
+                'href' => self::get_base_url() . '/r/popular',
+                'icon' => __DIR__ . '/img/zap.svg',
+                'class' => self::url_includes('r/popular') ? 'active' : '',
+                'label' => 'Popular',
+            ],
+            [
+                'href' => self::get_base_url() . '/subscriptions',
+                'icon' => __DIR__ . '/img/list.svg',
+                'class' => self::url_includes('subscriptions') ? 'active' : '',
+                'label' => 'Subscriptions',
+            ]
+        ];
+    }
+    public static function get_current_full_url()
+    {
+        return sprintf('%s://%s%s', $_SERVER['REQUEST_SCHEME'], $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']);
+    }
+    public static function url_includes($str)
+    {
+        return strpos(self::get_current_full_url(), $str) !== false;
+    }
+    public static function get_base_url()
+    {
+        if (self::url_includes('localhost')) {
+            return '';
+        } else {
+            return '/apol';
+        }
+    }
+    public static function get_host($url)
+    {
+        return parse_url($url, PHP_URL_HOST);
+    }
+    public static function get_path($url)
+    {
+        return parse_url($url, PHP_URL_PATH);
+    }
+    public static function embed($src)
+    {
+        return file_exists($src) ? file_get_contents($src) : '';
+    }
+    public static function formatk($val)
+    {
+        $val = (int) $val;
+        if ($val > 1000000) {
+            return sprintf('%sM', round($val / 1000000, 1));
+        } else if ($val > 1000) {
+            return sprintf('%sk', round($val / 1000, 1));
+        } else {
+            return $val;
+        }
+    }
+}
 
-				return `${urlParts[0]}.json?${urlParams.toString()}`;
-			}
-			getCurrentUrl() {
-				return this.ref.urlStack[this.ref.urlStack.length - 1];
-			}
-			loadMore() {
-				let self = this;
+# Types of Thing
+# t1 Comment
+# t2 Account
+# t3 Link
+# t4 Message
+# t5 Subreddit
+# t6 Award
+# t8 PromoCampaign
 
-				if (this.ref.loading) {
-					return;
-				}
+class RedditProxy
+{
+    function __construct()
+    {
+    }
+    public function request($url)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (iPhone; CPU iPhone OS 16_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $output = curl_exec($ch);
+        curl_close($ch);
+        $data = @json_decode($output, true);
+        if (!$data) {
+            $data = [
+                'error' => 'Could not parse JSON',
+                'raw' => $output,
+            ];
+        }
+        return $data;
+    }
+    public function get($request)
+    {
+        $path = $request->getUri()->getPath();
+        if (strpos($path, '/apol') === 0) {
+            $path = substr($path, 5);
+        }
+        $params = $request->getQueryParams();
+        $params_encoded = http_build_query($params);
+        $url = sprintf('https://www.reddit.com%s.json?%s', $path, $params_encoded);
+        return $this->request($url);
+    }
+}
 
-				let listing = this.ref.listing;
-				let lastItem = listing[listing.length - 1];
-				let lastItemName = lastItem.data.name;
+class Template
+{
+    function __construct()
+    {
+        $views = __DIR__ . '/views';
+        $cache = __DIR__ . '/blade-cache';
+        $this->blade = new Blade($views, $cache);
+    }
+    public function render($template, $data = [])
+    {
+        return $this->blade->make($template, $data)->render();
+    }
+}
 
-				if (!lastItemName || !this.ref.redditUrl) {
-					return;
-				}
+class Subscriptions
+{
+    function __construct()
+    {
+        $cookie_contents = $_COOKIE['subsriptions'] ?? '[]';
+        $this->subscriptions = json_decode($cookie_contents, true);
+    }
+    public function persist()
+    {
+        $cookie_contents = json_encode($this->subscriptions);
+        setcookie('subsriptions', $cookie_contents, time() + (86400 * 30), "/");
+    }
+    public function get_subsriptions()
+    {
+        return $this->subscriptions;
+    }
+    public function add_subscription($subreddit)
+    {
+        $this->subscriptions[] = $subreddit;
+        $this->persist();
+    }
+}
 
-				let newUrl = this.addParamsToUrl({
-					after: lastItemName,
-					count: 100
-				}, this.ref.redditUrl);
+$t = new Template();
+$r = new RedditProxy();
+$s = new Subscriptions();
 
-				this.addToUrlStack(newUrl);
+// defaults
 
-				self.ref.redditUrl = newUrl;
-				self.ref.loading = true;
+// routes
 
-				self.ref.api.request(newUrl, (data) => {
-					if (data.data.children ?? false) {
-						data.data.children.forEach((item) => {
-							self.ref.listing.push(item);
-						});
-						self.ref.loading = false;
-					}
-				});
-			}
-			addToUrlStack(url) {
-				this.ref.urlStack.push(url);
-				// window.history.pushState({}, "", url);
-			}
-			loadRedditUrl(url) {
-				let self = this;
+$router = Router::create();
 
-				self.ref.showSubRedditSelector = false;
+$router->get('.*', function (ServerRequest $request) use ($t, $r) {
+    $data = $r->get($request);
 
-				this.addToUrlStack(url);
+    if (isset($data['error'])) {
+        return new JsonResponse($data);
+    }
 
-				if (url[0] === "/") {
-					url = "https://www.reddit.com" + url;
-				}
+    $path = $request->getUri()->getPath();
+    $is_comments_page = strpos($path, '/comments/') !== false;
 
-				if (!url.includes(".json")) {
-					url += ".json";
-				}
+    if (isset($data['kind']) && $data['kind'] == 'Listing') {
+        $data = [$data];
+    }
 
-				self.ref.redditUrl = url;
-				self.ref.loading = true;
+    return $t->render('page', [
+        'data' => $data,
+        'is_comments_page' => $is_comments_page,
+    ]);
+});
 
-				let isCommentPage = url.includes("/comments/");
+$router->get('/subscriptions', function (ServerRequest $request) use ($t, $r, $s) {
+    $arr = $s->get_subsriptions();
 
-				if (isCommentPage) {
-					this.ref.listing = [];
-					this.ref.comments = [];
-				};
+    return $t->render('subscriptions', [
+        'arr' => $arr
+    ]);
+});
 
-				self.ref.api.request(url, (data) => {
-					if (isCommentPage) {
-						self.ref.comments = data[1].data.children;
-						self.ref.listing = [data[0].data.children[0].data];
-						self.ref.scrollToTop();
-					} else {
-						self.ref.comments = [];
-						self.ref.listing = data.data.children ?? [];
-					}
+$router->post('/subscriptions', function (ServerRequest $request) use ($t, $r, $s) {
+    $body = $request->getParsedBody();
+    $subscriptions = $body['subscriptions'] ?? '';
+    $lines = explode("\n", $subscriptions);
+    return 'a';
+});
 
-					self.ref.loading = false;
-					self.ref.$forceUpdate();
-				});
-			}
-		}
-
-		class API {
-			constructor(ref) {
-				this.ref = ref;
-			}
-			request(url, cb) {
-				let endpoint = config.apiEndpoint;
-				let base64EncodedUrl = btoa(url);
-
-				fetch(`${endpoint}?action=get-url&url=${base64EncodedUrl}`)
-					.then((response) => response.json())
-					.then(cb);
-			}
-		}
-
-		class guiEvents {
-			constructor(ref) {
-				this.ref = ref;
-				this.registerEvents();
-			}
-			handleScroll(event) {
-				let scrollTop = window.scrollY;
-				let scrollHeight = document.body.scrollHeight;
-				let clientHeight = document.documentElement.clientHeight;
-				let scrollPercentage =
-					(scrollTop / (scrollHeight - clientHeight)) * 100;
-
-				if (scrollPercentage > 90) {
-					this.ref.reddit.loadMore();
-				}
-			}
-			registerEvents() {
-				window.addEventListener("scroll", (event) => {
-					this.handleScroll(event);
-				});
-			}
-		}
-
-		var config = {
-			apiEndpoint: "api.php",
-			defaultRedditUrl: "https://www.reddit.com/r/worldnews.json",
-		};
-
-		if (window.location.hostname != "localhost") {
-			config.apiEndpoint = "https://endtime-instruments.org/apol/api.php";
-		}
-
-		var app = new Vue({
-			el: "#app",
-			data: {
-				urlStack: [],
-				redditUrl: false,
-				listing: [],
-				comments: [],
-				showSubRedditSelector: false,
-				loading: false,
-				activeSubreddit: false,
-			},
-			mounted: function() {
-				this.ref = this;
-				this.reddit = new reddit(this.ref);
-				this.api = new API(this.ref);
-				this.guiEvents = new guiEvents(this.ref);
-
-				this.reddit.loadRedditUrl(config.defaultRedditUrl);;
-			},
-			methods: {
-				getPreview: function(story) {
-					if (story.url.includes("i.redd.it")) {
-						return story.url;
-					}
-					return false;
-				},
-				getSubreddit: function() {
-					if (!this.redditUrl) {
-						return false;
-					}
-
-					let urlWithoutParams = this.redditUrl.split("?")[0];
-					let urlParts = urlWithoutParams.split("/");
-
-					for (let i = 0; i < urlParts.length; i++) {
-						if (urlParts[i] === "r") {
-							return urlParts[i + 1].replace(".json", "");
-						}
-					}
-				},
-				getStories: function() {
-					let stories = [];
-
-					console.log(this.listing);
-
-					this.listing.forEach((story) => {
-						if (story.name ?? false) {
-							stories.push(story);
-							return;
-						};
-						if (story.data ?? false) {
-							stories.push(story.data);
-							return;
-						}
-					});
-
-					return stories;
-				},
-				getSubredditList() {
-					return [{
-							title: "WorldNews",
-							url: "/r/worldnews.json"
-						},
-						{
-							title: "Wikipedia",
-							url: "/r/wikipedia.json"
-						},
-						{
-							title: "offbeat",
-							url: "/r/offbeat.json"
-						},
-						{
-							title: "LateStageCapitalism",
-							url: "/r/LateStageCapitalism.json"
-						},
-						{
-							title: "AskHistorians",
-							url: "/r/AskHistorians.json"
-						},
-						{
-							title: "PublicFreakout",
-							url: "/r/PublicFreakout.json"
-						},
-						{
-							title: "ifyoulikeblank",
-							url: "/r/ifyoulikeblank.json"
-						},
-						{
-							title: "dataisbeautiful",
-							url: "/r/dataisbeautiful.json"
-						}
-					];
-				},
-				toggleSubRedditSelector() {
-					this.showSubRedditSelector = !this.showSubRedditSelector;
-					this.scrollToTop();
-				},
-				scrollToTop: function() {
-					window.scrollTo(0, 0);
-				},
-				convertStringToHTML: function(string) {
-					let parser = new DOMParser();
-					let decodedString = parser.parseFromString(string, "text/html").documentElement.textContent;
-					return decodedString;
-				},
-				recursiveCommentRendering: function(comment) {
-					let html = "";
-					let classes = "";
-					let level = comment.data.depth;
-
-					if (level > 3) {
-						return "";
-					}
-
-					if (typeof comment.data.author === "undefined") {
-						return "";
-					}
-
-					if (comment.data.author == 'AutoModerator') {
-						classes += "closed ";
-					}
-
-					html += "<div class='comment " + classes + "'>";
-					html += "<div class='comment-container'>";
-					html += "<div onclick='toggle(this)' class='comment-author'>" + comment.data.author + " <span>" + this.formatDec(comment.data.ups) + "</span></div>";
-					html += "<div class='comment-body'>" + this.convertStringToHTML(comment.data.body_html) + "</div>";
-					html += "</div>";
-					html += "<div class='comment-replies'>";
-
-					if (comment.data.replies) {
-						comment.data.replies.data.children.forEach((reply) => {
-							html += this.recursiveCommentRendering(reply);
-						});
-					}
-					html += "</div>";
-
-					return html;
-				},
-				stripHost: function(url) {
-					let u = new URL(url);
-					return u.hostname;
-				},
-				stripPath: function(url) {
-					let u = new URL(url);
-					return u.pathname;
-				},
-				formatDec: function(val) {
-					if (val < 1000) {
-						return val;
-					}
-					return (val / 1000).toFixed(1) + "k";
-				},
-				formatTs: function(val) {
-					// set timezones
-					return moment.unix(val).utc().fromNow();
-				},
-			}
-		});
-	</script>
-</body>
-
-</html>
+$router->dispatch();

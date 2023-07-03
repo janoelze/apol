@@ -27,6 +27,8 @@ echo "Creating remote directories"
 
 ssh $remote_addr "mkdir -p $remote_dir"
 
-rsync -vhra build/ $remote_addr:$remote_dir/ --include='html/**.gitignore' --exclude='html/.git' --filter=':- html/.gitignore' --delete-after --delete
+rsync -vhra build/ $remote_addr:$remote_dir/ --include='html/**.gitignore' --exclude='html/.git' --filter=':- html/.gitignore'
+
+ssh $remote_addr "mv $remote_dir/.htaccess-prod $remote_dir/.htaccess"
 
 echo "Done! :) https://endtime-instruments.org/apol/"

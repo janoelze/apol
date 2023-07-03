@@ -193,7 +193,11 @@ a {
   display: flex;
   font-size: 14px;
   gap: 13px;
-  color: #94969C;
+  color: #616269;
+}
+
+.meta .text {
+  color: #EEEFF4;
 }
 
 .meta>div {
@@ -278,17 +282,6 @@ a {
   display: none;
 }
 
-.comment .comment-body blockquote {
-  margin: 0.75em 0 0 0;
-  border-radius: 5px;
-  padding: 0.5em 1em;
-  background-color: rgba(255,255,255,0.05);
-}
-
-.comment .comment-body blockquote p:before {
-  content: "> ";
-}
-
 .comment.closed .comment-container {
   /* box-shadow: none; */
   /* background-color: transparent; */
@@ -319,4 +312,211 @@ a {
 
 .subreddit-selector-item:last-child {
   box-shadow: none;
+}
+
+/* */
+
+.list-t3 {
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+}
+
+.thing.t3 {
+  text-decoration: none;
+  background-color: #21242D;
+  display: flex;
+  flex-direction: column;
+  padding: 13px;
+  gap: 13px;
+  color: #EEEFF4;
+}
+
+.thing.t3:visited * {
+  color: #939498;
+}
+
+.thing.t3 .url {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background-color: #2C2F37;
+  padding: 12px 10px;
+  border-radius: 4px;
+}
+
+.thing.t3 .url .url-icon {
+  color: #75787E;
+}
+
+.thing.t3 .url .url-icon svg {
+  height: 20px;
+}
+
+.thing.t3 .url .url-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: fit-content;
+  font-size: 14px;
+  margin-right: auto;
+}
+
+.thing.t3 .url .url-text span:first-child {
+  color: #94969C;
+}
+
+.thing.t3 .url .url-text span:last-child {
+  color: #505256;
+}
+
+.thing.t3 .image img {
+  width: 100%;
+  max-width: 100%;
+  border-radius: 10px;
+  height: auto;
+}
+
+.progress-indicator {
+  display: none;
+}
+
+.progress-indicator.htmx-request {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+  color: #94969C;
+}
+
+/* .thing.t1 .author {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px
+} */
+
+.thing.t1 {
+  /* padding-left: 10px; */
+}
+
+.thing.t1 .comment-body {
+  background-color: rgba(0,0,0,0.2);
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.thing.t1 .meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.thing.t1 .comment-body .body p,
+.thing.t1 .comment-body .body blockquote {
+  margin: 0.75em 0 0 0;
+}
+
+.thing.t1 .comment-body .body blockquote {
+  overflow: auto;
+  background-color: rgba(255, 255, 255, 0.05);
+  padding-bottom: 0.5em;
+  padding-left: 0.5em;
+  color: #94969C;
+}
+
+.thing.t1 .comment-body .body blockquote p:first-child {
+  margin-top: 0.5em;
+}
+
+.thing.t1 .comment-body .body blockquote p:before {
+  content: "> ";
+}
+
+.list-t1 {
+  /* box-shadow: inset 0px 0.5px 0px 0px #43454C; */
+  padding: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  background-color: #21242D;
+}
+
+.list-t1.replies {
+  padding: 0px 0 0 10px;
+}
+
+.push-right {
+  margin-left: auto;
+}
+
+/* tab-bar */
+
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(32, 36, 48, 0.96);
+  display: flex;
+  padding: 10px 0;
+  align-items: center;
+  gap: 35px;
+  font-size: 12.5px;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.tab-bar a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-decoration: none;
+  color: #75787E;
+  gap: 4px;
+}
+
+.tab-bar a.active {
+  color: #4B96F7;
+}
+
+.tab-bar a svg {
+  height: 22px;
+  width: auto;
+}
+
+.section {
+  padding: 15px;
+  border-radius: 12px;
+  background-color: #21242D;
+  overflow: auto;
+}
+
+.section.empty {
+  display: flex;
+  padding: 40px 0;
+  align-items: center;
+  justify-content: center;
+  color: #616269;
+}
+
+.sections {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.sections form textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  background-color: transparent;
+  border: 2px solid #43454C;
+  overflow: auto;
 }

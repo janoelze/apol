@@ -1,16 +1,18 @@
-version: '3'
+version: "3"
 services:
   apache:
-    image: php:8.1-apache
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - 8070:80
     volumes:
       - ./html:/var/www/html
+      - ./apache-config:/etc/apache2/sites-enabled
     depends_on:
       - composer
     working_dir: /var/www/html
     command: ["apache2-foreground"]
-
   composer:
     image: composer:latest
     volumes:

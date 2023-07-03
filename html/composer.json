@@ -1,0 +1,19 @@
+{
+    "name": "janoelze/apol",
+    "autoload": {
+        "psr-4": {
+            "Janoelze\\Apol\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Jan Oelze",
+            "email": "janoelzelebt@googlemail.com"
+        }
+    ],
+    "require": {
+        "jenssegers/blade": "^1.4",
+        "cakephp/cache": "^4.4",
+        "miladrahimi/phprouter": "5.*"
+    }
+}
