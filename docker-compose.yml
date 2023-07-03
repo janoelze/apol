@@ -1,0 +1,19 @@
+version: '3'
+services:
+  apache:
+    image: php:8.1-apache
+    ports:
+      - 8070:80
+    volumes:
+      - ./html:/var/www/html
+    depends_on:
+      - composer
+    working_dir: /var/www/html
+    command: ["apache2-foreground"]
+
+  composer:
+    image: composer:latest
+    volumes:
+      - ./html:/app
+    working_dir: /app
+    command: ["composer", "install"]
