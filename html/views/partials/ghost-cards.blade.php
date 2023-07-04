@@ -15,7 +15,7 @@
                 opacity: 0.1;
             }
             50% {
-                opacity: 0.85;
+                opacity: 1;
             }
             100% {
                 opacity: 0.1;
@@ -24,7 +24,7 @@
 
         .ghost-card {
             width: 100%;
-            animation: fade-in .87s infinite linear;
+            animation: fade-in .95s infinite linear;
         }
     </style>
 </div>

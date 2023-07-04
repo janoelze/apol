@@ -238,8 +238,8 @@ a {
     color: #EEEFF4;
 }
 
-.thing.t3:visited * {
-    color: #939498;
+.thing.t3:visited {
+    opacity: 0.5!important;
 }
 
 .thing.t3 .title {
