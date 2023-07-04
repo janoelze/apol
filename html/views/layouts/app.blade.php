@@ -15,6 +15,30 @@
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
                 gtag('config', 'G-GLLFFQ7PRP');
+                // detect url change
+
+                gtag('event', 'page_view', {
+                    'page_title' : document.title,
+                    'page_location' : window.location.href,
+                    'page_path' : window.location.pathname
+                });
+
+                window.addEventListener('load', function() {
+                    var currentUrl = window.location.href;
+                    var observer = new MutationObserver(function(mutations) {
+                        mutations.forEach(function(mutation) {
+                            if (currentUrl != window.location.href) {
+                                currentUrl = window.location.href;
+                                gtag('event', 'page_view', {
+                                    'page_title' : document.title,
+                                    'page_location' : window.location.href,
+                                    'page_path' : window.location.pathname
+                                });
+                            }
+                        });
+                    });
+                    observer.observe(document.querySelector('body'), {childList: true, subtree: true});
+                });
             </script>
         @endif
     </head>
