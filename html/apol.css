@@ -408,12 +408,12 @@ a {
   gap: 10px;
 }
 
-.thing.t1 .comment-body .body p,
-.thing.t1 .comment-body .body blockquote {
+.md p,
+.md blockquote {
   margin: 0.75em 0 0 0;
 }
 
-.thing.t1 .comment-body .body blockquote {
+.md blockquote {
   overflow: auto;
   background-color: rgba(255, 255, 255, 0.05);
   padding-bottom: 0.5em;
@@ -421,11 +421,11 @@ a {
   color: #94969C;
 }
 
-.thing.t1 .comment-body .body blockquote p:first-child {
+.md blockquote p:first-child {
   margin-top: 0.5em;
 }
 
-.thing.t1 .comment-body .body blockquote p:before {
+.md blockquote p:before {
   content: "> ";
 }
 

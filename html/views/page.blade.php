@@ -16,16 +16,18 @@
                         @php
                             $is_last = $key == count($entry['data']['children']) - 1 && !$is_comments_page;
                         @endphp
-                        @include('partials.post', ['data' => $value['data'], 'is_last' => $is_last])
+                        @include('partials.post', ['data' => $value['data'], 'is_last' => $is_last, 'is_comments_page' => $is_comments_page])
                     @endforeach
                 </div>
             @endif
             @if ($entry['kind'] == 'Listing' && $entry['data']['children'][0]['kind'] == 't1')
-                <div class="list-t1">
-                    @foreach ($entry['data']['children'] as $key => $value)
-                        @include('partials.comment', ['data' => $value['data']])
-                    @endforeach
-                </div>
+                @if($entry['data']['children'] ?? false && count($entry['data']['children']) > 0)
+                    <div class="list-t1">
+                        @foreach ($entry['data']['children'] as $key => $value)
+                            @include('partials.comment', ['data' => $value['data']])
+                        @endforeach
+                    </div>
+                @endif
             @endif
         @endforeach
     </div>
