@@ -11,33 +11,19 @@
         @if(Helpers::is_production())
             <script async src="https://www.googletagmanager.com/gtag/js?id=G-GLLFFQ7PRP"></script>
             <script>
+                window.gaId = 'G-GLLFFQ7PRP';
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
-                gtag('config', 'G-GLLFFQ7PRP');
-                // detect url change
+                gtag('config', window.gaId);
 
-                gtag('event', 'page_view', {
-                    'page_title' : document.title,
-                    'page_location' : window.location.href,
-                    'page_path' : window.location.pathname
-                });
-
-                window.addEventListener('load', function() {
-                    var currentUrl = window.location.href;
-                    var observer = new MutationObserver(function(mutations) {
-                        mutations.forEach(function(mutation) {
-                            if (currentUrl != window.location.href) {
-                                currentUrl = window.location.href;
-                                gtag('event', 'page_view', {
-                                    'page_title' : document.title,
-                                    'page_location' : window.location.href,
-                                    'page_path' : window.location.pathname
-                                });
-                            }
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.body.addEventListener('htmx:afterSwap', function(event) {
+                        var newUrl = event.detail.xhr.responseURL;
+                        gtag('config', window.gaId, {
+                            'page_path': newUrl
                         });
                     });
-                    observer.observe(document.querySelector('body'), {childList: true, subtree: true});
                 });
             </script>
         @endif
