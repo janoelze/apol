@@ -10,25 +10,23 @@
 @endif
   <div class="title">{{ $data['title'] }}</div>
   @if($is_comments_page && $data['selftext_html'] ?? false)
-      <div class="selftext">{!! htmlspecialchars_decode($data['selftext_html']) !!}</div>
-    @endif
-  @if(!$is_comments_page)
-    @if($picture = Helpers::get_embeddable_picture($data))
-      <div class="image" href="{{ $data['url'] }}">
-        <img src="{{ $picture['src'] }}" />
-      </div>
-    @endif
-    @if($data['url'])
-      <div class="url">
-        <div class="url-icon">{!! Helpers::embed('./img/link.svg') !!}</div>
-        <div class="url-text">
-          <div>
-            <span>{{ Helpers::get_host($data['url']) }}</span><span>{{ Helpers::get_path($data['url']) }}</span>
-          </div>
+    <div class="selftext">{!! htmlspecialchars_decode($data['selftext_html']) !!}</div>
+  @endif
+  @if($picture = Helpers::get_embeddable_picture($data))
+    <div class="image" href="{{ $data['url'] }}">
+      <img src="{{ $picture['src'] }}" />
+    </div>
+  @endif
+  @if(!$is_comments_page && $data['url'] ?? false)
+    <div class="url">
+      <div class="url-icon">{!! Helpers::embed('./img/link.svg') !!}</div>
+      <div class="url-text">
+        <div>
+          <span>{{ Helpers::get_host($data['url']) }}</span><span>{{ Helpers::get_path($data['url']) }}</span>
         </div>
-        <div class="url-icon">{!! Helpers::embed('./img/chevron-right.svg') !!}</div>
       </div>
-    @endif
+      <div class="url-icon">{!! Helpers::embed('./img/chevron-right.svg') !!}</div>
+    </div>
   @endif
   <div class="meta">
     <div>{!! Helpers::embed('./img/arrow-up.svg') !!} {{ Helpers::formatk($data['ups']) }}</div>

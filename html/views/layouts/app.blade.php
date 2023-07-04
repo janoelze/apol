@@ -1,5 +1,3 @@
-<!-- Stored in resources/views/layouts/app.blade.php -->
- 
 <html>
     <head>
         <title>Apol - @yield('title')</title>

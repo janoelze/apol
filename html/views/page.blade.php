@@ -31,5 +31,4 @@
             @endif
         @endforeach
     </div>
-    <div class="progress-indicator">Loading…</div>
 @endsection
