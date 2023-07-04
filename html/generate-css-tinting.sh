@@ -1,6 +1,6 @@
 css_file="tinting.css"
-base_color_r="32"
-base_color_g="36"
+base_color_r="52"
+base_color_g="6"
 base_color_b="48"
 
 generate_tinted_classes() {
