@@ -102,6 +102,26 @@ class Helpers
             ]
         ];
     }
+
+    public static function get_settings() {
+        return [
+            [
+                'name' => 'Colorful Nests',
+                'type' => 'toggle',
+                'defaultValue' => false,
+            ]
+        ];
+    }
+
+    public static function set_setting($name, $value) {
+        $settings = self::get_settings();
+        foreach ($settings as $setting) {
+            if ($setting['name'] === $name) {
+                $setting['activation_func']($value);
+            }
+        }
+    }
+
     public static function extract_subreddit_id(){
         $url = $_SERVER['REQUEST_URI'];
         $matches = [];
@@ -333,9 +353,7 @@ $router->get($base_url . '/get-video-embed', function (ServerRequest $request) u
 });
 
 $router->get('/settings', function (ServerRequest $request) use ($t, $r, $s) {
-    return $t->render('settings', [
-
-    ]);
+    return $t->render('settings', []);
 });
 
 $router->dispatch();

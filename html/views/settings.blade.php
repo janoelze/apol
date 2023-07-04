@@ -5,10 +5,13 @@
 @section('content')
     <div class="sections">
         <div class="generic-list">
-            <a href="#">test</a>
-            <a href="#">test</a>
-            <a href="#">test</a>
-            <a href="#">test</a>
+            @foreach(Helpers::get_settings() as $setting)
+                <a>
+                    <span>{{ $setting['name'] }}</span>
+                     @include('partials.switch', ['isEnabled' => $setting['defaultValue']])
+                </a>
+               
+            @endforeach
         </div>
     </div>
 @endsection
