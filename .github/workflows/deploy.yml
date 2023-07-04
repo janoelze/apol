@@ -15,3 +15,5 @@ jobs:
       run: ssh-keyscan -H aquila.uberspace.de >> ~/.ssh/known_hosts
     - name: Upload
       run: rsync -avzr --exclude 'data' --delete ${GITHUB_WORKSPACE}/html/ janoelze@aquila.uberspace.de:/var/www/virtual/janoelze/endtime-instruments.org/apol/
+    - name: Update .htaccess
+      run: ssh janoelze@aquila.uberspace.de "mv /var/www/virtual/janoelze/endtime-instruments.org/apol/.htaccess-prod /var/www/virtual/janoelze/endtime-instruments.org/apol/.htaccess"
