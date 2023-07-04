@@ -10,7 +10,7 @@
         </style>
     </head>
     <body>
-        @if($is_content_fetch || !$async_load)
+        @if(isset($is_content_fetch) && $is_content_fetch || !$async_load)
             <div class="container">
                 @yield('content')
             </div>
