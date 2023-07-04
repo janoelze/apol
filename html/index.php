@@ -4,6 +4,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 require 'vendor/autoload.php';
+require_once 'simple_html_dom.php';
 
 use Jenssegers\Blade\Blade;
 use MiladRahimi\PhpRouter\Router;
@@ -94,6 +95,12 @@ class Helpers
                 'label' => 'Subscriptions',
             ]
         ];
+    }
+    public static function extract_subreddit_id(){
+        $url = $_SERVER['REQUEST_URI'];
+        $matches = [];
+        preg_match('/\/r\/([^\/]+)/', $url, $matches);
+        return $matches[1] ?? '';
     }
     public static function get_current_full_url()
     {
@@ -220,6 +227,7 @@ class Subscriptions
 $t = new Template();
 $r = new RedditProxy();
 $s = new Subscriptions();
+$base_url = Helpers::get_base_url();
 
 // defaults
 
@@ -227,15 +235,16 @@ $s = new Subscriptions();
 
 $router = Router::create();
 
-$router->get('.*', function (ServerRequest $request) use ($t, $r) {
+$router->get($base_url . '.*', function (ServerRequest $request) use ($t, $r) {
     $data = $r->get($request);
 
     if (isset($data['error'])) {
         return new JsonResponse($data);
     }
 
-    $path = $request->getUri()->getPath();
+    $path = $request->getUri()->getPath() ?? '/r/all';
     $is_comments_page = strpos($path, '/comments/') !== false;
+    $subreddit_id = Helpers::extract_subreddit_id();
 
     if (isset($data['kind']) && $data['kind'] == 'Listing') {
         $data = [$data];
@@ -243,23 +252,78 @@ $router->get('.*', function (ServerRequest $request) use ($t, $r) {
 
     return $t->render('page', [
         'data' => $data,
+        'subreddit_id' => $subreddit_id,
         'is_comments_page' => $is_comments_page,
     ]);
 });
 
-$router->get('/subscriptions', function (ServerRequest $request) use ($t, $r, $s) {
+$router->get($base_url . '/subscriptions', function (ServerRequest $request) use ($t, $r, $s) {
     $arr = $s->get_subsriptions();
+
+    if (empty($arr)) {
+        $arr = json_decode(file_get_contents('./default-subreddits.json'), true);
+    }
 
     return $t->render('subscriptions', [
         'arr' => $arr
     ]);
 });
 
-$router->post('/subscriptions', function (ServerRequest $request) use ($t, $r, $s) {
-    $body = $request->getParsedBody();
-    $subscriptions = $body['subscriptions'] ?? '';
-    $lines = explode("\n", $subscriptions);
-    return 'a';
+$router->get($base_url . '/get-video-embed', function (ServerRequest $request) use ($t, $r, $s) {
+    function getVideoSrcFromVReddit($url, $r)
+    {
+        $url = str_replace('v.redd.it', 'old.reddit.com', $url);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (iPhone; CPU iPhone OS 16_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        $output = curl_exec($ch);
+        curl_close($ch);
+
+        // var_dump($output);
+
+        $html = str_get_html($output);
+
+        // var_dump($html);
+
+        
+        
+        // $res = $r->request($url);
+
+        // var_dump($res);
+
+        // $html = new simple_html_dom();
+        // $html = $html->load($output);
+        
+        // // Make an HTTP request to the v.redd.it link and get the HTML content
+        // $html = load($html);
+
+        // // Find the video element using CSS selectors
+        $videoElement = $html->find('video');
+
+        var_dump($videoElement);
+
+        // // Extract the video source (src) attribute
+        // $videoSrc = $videoElement->src;
+
+        // // Clean up the HTML DOM object
+        // $html->clear();
+        // unset($html);
+
+        // return $videoSrc;
+    }
+
+    // Example usage
+    $vRedditUrl = 'https://v.redd.it/05jtqmxop29b1'; // Replace with your v.redd.it URL
+    $videoSrc = getVideoSrcFromVReddit($vRedditUrl, $r);
+
+    // Output the video src
+    echo 'Video src: ' . $videoSrc;
+
+    return $t->render('subscriptions', [
+        'arr' => $arr
+    ]);
 });
 
 $router->dispatch();

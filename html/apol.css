@@ -181,14 +181,6 @@ a {
   max-width: fit-content;
 }
 
-.loading-indicator {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 90%;
-  padding: 20px 0;
-}
-
 .meta {
   display: flex;
   font-size: 14px;
@@ -252,7 +244,7 @@ a {
 
 .comment-container {
   border-radius: 5px;
-  background-color: rgba(0,0,0,0.1);
+  background-color: rgba(0, 0, 0, 0.1);
   box-shadow: inset 0px 0px 0px 1px #43454C;
   padding: 10px;
   display: flex;
@@ -380,14 +372,15 @@ a {
 }
 
 .progress-indicator {
-  display: none;
+  opacity: 0;
 }
 
 .progress-indicator.htmx-request {
   display: flex;
+  opacity: 1;
   justify-content: center;
   align-items: center;
-  padding: 20px 0;
+  padding: 20px 0 100px 0;
   color: #94969C;
 }
 
@@ -403,7 +396,7 @@ a {
 }
 
 .thing.t1 .comment-body {
-  background-color: rgba(0,0,0,0.2);
+  background-color: rgba(0, 0, 0, 0.2);
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 5px;
@@ -453,22 +446,48 @@ a {
   margin-left: auto;
 }
 
+/* listing */
+
+.listing {
+  margin-top: 5px;
+}
+
+/* tab-title */
+
+.tab-title {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(32, 36, 48, 0.98);
+  display: flex;
+  height: 60px;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  justify-content: center;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  /* box-shadow: 0px 0.5px 0px 0px #43454C; */
+}
+
 /* tab-bar */
 
 .tab-bar {
+  /* box-shadow: 0px -0.5px 0px 0px #43454C; */
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: rgba(32, 36, 48, 0.96);
+  background-color: rgba(32, 36, 48, 0.98);
   display: flex;
-  padding: 10px 0;
+  height: 60px;
   align-items: center;
   gap: 35px;
   font-size: 12.5px;
   justify-content: center;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
 }
 
 .tab-bar a {
@@ -478,7 +497,7 @@ a {
   flex-direction: column;
   text-decoration: none;
   color: #75787E;
-  gap: 4px;
+  gap: 3px;
 }
 
 .tab-bar a.active {
@@ -509,7 +528,8 @@ a {
   display: flex;
   gap: 10px;
   flex-direction: column;
-  padding: 20px;
+  padding: 15px;
+  padding-bottom: 100px;
 }
 
 .sections form textarea {
@@ -519,4 +539,21 @@ a {
   background-color: transparent;
   border: 2px solid #43454C;
   overflow: auto;
+}
+
+/* generic-list */
+
+.generic-list {
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  overflow: auto;
+  gap: 1px
+}
+
+.generic-list a {
+  padding: 15px;
+  color: #EEEFF4;
+  text-decoration: none;
+  background-color: #21242D;
 }

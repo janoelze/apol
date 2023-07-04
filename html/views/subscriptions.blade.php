@@ -3,11 +3,12 @@
 @section('title', 'Subscriptions')
  
 @section('content')
+    <div class="tab-title">Subscriptions</div>
     <div class="sections">
         @if(count($arr))
             <div class="generic-list">
                 @foreach ($arr as $subreddit)
-                    <a href="{{ Helpers::get_base_url() }}/r/{{ $subreddit }}">{{ $subreddit }}</a>
+                    <a href="{{ Helpers::get_base_url() }}/r/{{ $subreddit }}">/r/{{ $subreddit }}</a>
                 @endforeach
             </div>
         @else
