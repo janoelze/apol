@@ -4,9 +4,9 @@
  
 @section('content')
     @if($subreddit_id ?? false)
-        <div class="tab-title">/r/{{ $subreddit_id }}</div>
+        <div class="tab-title tint-bg-down-2">/r/{{ $subreddit_id }}</div>
     @else
-        <div class="tab-title">Home</div>
+        <div class="tab-title tint-bg-down-2">Home</div>
     @endif
     <div class="listing">
         @foreach ($data as $key => $entry)

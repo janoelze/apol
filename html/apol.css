@@ -91,95 +91,6 @@ a {
     border-radius: 10px;
 }
 
-.story-list .story {
-    background-color: #21242D;
-    display: flex;
-    flex-direction: column;
-    padding: 13px;
-    gap: 13px;
-}
-
-.story-list .story .story-title {
-    font-size: 17px;
-    font-weight: 500;
-    line-height: 1.25em;
-}
-
-.story-title span {
-    font-size: 14px;
-    font-weight: 400;
-    color: #616269;
-    padding: 2px 5px;
-    border-radius: 3px;
-    background-color: #2C2F37;
-}
-
-.story-url {
-    background-color: #2C2F37;
-    padding: 13px 15px;
-    display: flex;
-    border-radius: 10px;
-    width: 100%;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.story-url>div {
-    overflow: hidden;
-    white-space: nowrap;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-}
-
-.story-url>div:nth-child(1) svg {
-    width: auto;
-    height: 22px;
-    stroke: #75787E;
-}
-
-.story-url>div:nth-child(3) svg {
-    width: auto;
-    height: 25px;
-    stroke: #75787E;
-}
-
-.story-url>div:nth-child(1) {
-    /* width: 40px; */
-}
-
-.story-url>div:nth-child(2) {
-    /* text-overflow: ellipsis; */
-    /* overflow: hidden; */
-    /* max-width: fit-content; */
-    width: 90%;
-}
-
-.story-url>div:nth-child(3) {
-    /* width: 40px; */
-}
-
-.story-url-uri {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.story-url-uri span {
-    display: inline-block;
-}
-
-.story-url-uri-host {
-    color: #94969C;
-}
-
-.story-url-uri-path {
-    color: #505256;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: fit-content;
-}
 
 .meta {
     display: flex;
@@ -319,7 +230,7 @@ a {
 
 .thing.t3 {
     text-decoration: none;
-    background-color: #21242D;
+    /* background-color: #21242D; */
     display: flex;
     flex-direction: column;
     padding: 15px 13px;
@@ -342,13 +253,11 @@ a {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    background-color: #2C2F37;
     padding: 12px 10px;
     border-radius: 5px;
 }
 
 .thing.t3 .url .url-icon {
-    color: #75787E;
 }
 
 .thing.t3 .url .url-icon svg {
@@ -362,14 +271,6 @@ a {
     max-width: fit-content;
     font-size: 14px;
     margin-right: auto;
-}
-
-.thing.t3 .url .url-text span:first-child {
-    color: #94969C;
-}
-
-.thing.t3 .url .url-text span:last-child {
-    color: #505256;
 }
 
 .thing.t3 .image img {
@@ -453,7 +354,6 @@ a {
     top: 0;
     left: 0;
     width: 100%;
-    background-color: rgba(32, 36, 48, 0.98);
     display: flex;
     height: 60px;
     align-items: center;
@@ -549,9 +449,7 @@ a {
 
 .generic-list a {
     padding: 15px;
-    color: #EEEFF4;
     text-decoration: none;
-    background-color: #21242D;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
