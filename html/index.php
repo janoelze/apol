@@ -78,25 +78,25 @@ class Helpers
             [
                 'href' => self::get_base_url() . '/r/all',
                 'icon' => __DIR__ . '/img/home.svg',
-                'class' => self::url_includes('r/all') ? 'active' : '',
+                'active' => self::url_includes('r/all'),
                 'label' => 'Home',
             ],
             [
                 'href' => self::get_base_url() . '/r/popular',
                 'icon' => __DIR__ . '/img/zap.svg',
-                'class' => self::url_includes('r/popular') ? 'active' : '',
+                'active' => self::url_includes('r/popular'),
                 'label' => 'Popular',
             ],
             [
                 'href' => self::get_base_url() . '/subscriptions',
                 'icon' => __DIR__ . '/img/list.svg',
-                'class' => self::url_includes('subscriptions') ? 'active' : '',
+                'active' => self::url_includes('subscriptions'),
                 'label' => 'Subs',
             ],
             [
                 'href' => self::get_base_url() . '/settings',
                 'icon' => __DIR__ . '/img/list.svg',
-                'class' => self::url_includes('settings') ? 'active' : '',
+                'active' => self::url_includes('settings'),
                 'label' => 'Settings',
             ]
         ];

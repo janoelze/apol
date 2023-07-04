@@ -391,12 +391,12 @@ a {
     justify-content: center;
     flex-direction: column;
     text-decoration: none;
-    color: #75787E;
+    /* color: #75787E; */
     gap: 3px;
 }
 
 .tab-bar a.active {
-    color: #4B96F7;
+    /* color: #4B96F7; */
 }
 
 .tab-bar a svg {
