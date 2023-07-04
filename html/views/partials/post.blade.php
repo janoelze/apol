@@ -2,7 +2,8 @@
   <div class="thing t3">
 @else
   @if($is_last)
-    <a class="thing t3" href="{{ Helpers::get_base_url() }}{{ $data['permalink'] }}" hx-get="{!! Helpers::get_next_page($data) !!}" hx-select=".list-t3">
+    {{-- hx-get="{!! Helpers::get_next_page($data) !!}" hx-select=".list-t3" --}}
+    <a class="thing t3" href="{{ Helpers::get_base_url() }}{{ $data['permalink'] }}">
   @else
     <a class="thing t3" href="{{ Helpers::get_base_url() }}{{ $data['permalink'] }}">
   @endif

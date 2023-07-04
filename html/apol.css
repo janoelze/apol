@@ -374,31 +374,6 @@ a {
     height: auto;
 }
 
-.progress-indicator {
-    opacity: 0;
-}
-
-.progress-indicator.htmx-request {
-    display: flex;
-    opacity: 1;
-    justify-content: center;
-    align-items: center;
-    padding: 20px 0 100px 0;
-    color: #94969C;
-}
-
-
-/* .thing.t1 .author {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 5px
-} */
-
-.thing.t1 {
-    /* padding-left: 10px; */
-}
-
 .thing.t1 .comment-body {
     background-color: rgba(0, 0, 0, 0.2);
     padding: 10px;
@@ -412,12 +387,12 @@ a {
     gap: 10px;
 }
 
-.thing.t1 .comment-body .body p,
-.thing.t1 .comment-body .body blockquote {
+.md p,
+.md blockquote {
     margin: 0.75em 0 0 0;
 }
 
-.thing.t1 .comment-body .body blockquote {
+.md blockquote {
     overflow: auto;
     background-color: rgba(255, 255, 255, 0.05);
     padding-bottom: 0.5em;
@@ -425,11 +400,11 @@ a {
     color: #94969C;
 }
 
-.thing.t1 .comment-body .body blockquote p:first-child {
+.md blockquote p:first-child {
     margin-top: 0.5em;
 }
 
-.thing.t1 .comment-body .body blockquote p:before {
+.md blockquote p:before {
     content: "> ";
 }
 

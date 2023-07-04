@@ -259,12 +259,16 @@ $base_url = Helpers::get_base_url();
 // routes
 
 $router = Router::create();
+$is_content_fetch = isset($_GET['fetch']);
 
-$router->get($base_url . '.*', function (ServerRequest $request) use ($t, $r) {
-    $data = $r->get($request);
+$router->get($base_url . '.*', function (ServerRequest $request) use ($t, $r, $is_content_fetch) {
+    $data = [];
 
-    if (isset($data['error'])) {
-        return new JsonResponse($data);
+    if($is_content_fetch) {
+        $data = $r->get($request);
+        if (isset($data['error'])) {
+            return new JsonResponse($data);
+        }
     }
 
     $path = $request->getUri()->getPath() ?? '/r/all';
@@ -277,12 +281,13 @@ $router->get($base_url . '.*', function (ServerRequest $request) use ($t, $r) {
 
     return $t->render('page', [
         'data' => $data,
+        'is_content_fetch' => $is_content_fetch,
         'subreddit_id' => $subreddit_id,
         'is_comments_page' => $is_comments_page,
     ]);
 });
 
-$router->get($base_url . '/subscriptions', function (ServerRequest $request) use ($t, $r, $s) {
+$router->get($base_url . '/subscriptions', function (ServerRequest $request) use ($t, $r, $s, $is_content_fetch) {
     $arr = $s->get_subsriptions();
 
     if (empty($arr)) {
@@ -290,69 +295,15 @@ $router->get($base_url . '/subscriptions', function (ServerRequest $request) use
     }
 
     return $t->render('subscriptions', [
-        'arr' => $arr
+        'arr' => $arr,
+        'is_content_fetch' => $is_content_fetch
     ]);
 });
 
-$router->get($base_url . '/get-video-embed', function (ServerRequest $request) use ($t, $r, $s) {
-    function getVideoSrcFromVReddit($url, $r)
-    {
-        $url = str_replace('v.redd.it', 'old.reddit.com', $url);
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (iPhone; CPU iPhone OS 16_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        $output = curl_exec($ch);
-        curl_close($ch);
-
-        // var_dump($output);
-
-        $html = str_get_html($output);
-
-        // var_dump($html);
-
-        
-        
-        // $res = $r->request($url);
-
-        // var_dump($res);
-
-        // $html = new simple_html_dom();
-        // $html = $html->load($output);
-        
-        // // Make an HTTP request to the v.redd.it link and get the HTML content
-        // $html = load($html);
-
-        // // Find the video element using CSS selectors
-        $videoElement = $html->find('video');
-
-        var_dump($videoElement);
-
-        // // Extract the video source (src) attribute
-        // $videoSrc = $videoElement->src;
-
-        // // Clean up the HTML DOM object
-        // $html->clear();
-        // unset($html);
-
-        // return $videoSrc;
-    }
-
-    // Example usage
-    $vRedditUrl = 'https://v.redd.it/05jtqmxop29b1'; // Replace with your v.redd.it URL
-    $videoSrc = getVideoSrcFromVReddit($vRedditUrl, $r);
-
-    // Output the video src
-    echo 'Video src: ' . $videoSrc;
-
-    return $t->render('subscriptions', [
-        'arr' => $arr
+$router->get($base_url . '/settings', function (ServerRequest $request) use ($t, $r, $s, $is_content_fetch) {
+    return $t->render('settings', [
+        'is_content_fetch' => $is_content_fetch
     ]);
-});
-
-$router->get('/settings', function (ServerRequest $request) use ($t, $r, $s) {
-    return $t->render('settings', []);
 });
 
 $router->dispatch();
