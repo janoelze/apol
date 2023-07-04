@@ -281,6 +281,7 @@ $router->get($base_url . '.*', function (ServerRequest $request) use ($t, $r, $i
 
     return $t->render('page', [
         'data' => $data,
+        'async_load' => true,
         'is_content_fetch' => $is_content_fetch,
         'subreddit_id' => $subreddit_id,
         'is_comments_page' => $is_comments_page,
@@ -296,13 +297,13 @@ $router->get($base_url . '/subscriptions', function (ServerRequest $request) use
 
     return $t->render('subscriptions', [
         'arr' => $arr,
-        'is_content_fetch' => $is_content_fetch
+        'async_load' => false
     ]);
 });
 
 $router->get($base_url . '/settings', function (ServerRequest $request) use ($t, $r, $s, $is_content_fetch) {
     return $t->render('settings', [
-        'is_content_fetch' => $is_content_fetch
+        'async_load' => false
     ]);
 });
 
