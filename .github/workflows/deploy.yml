@@ -1,0 +1,19 @@
+on: push
+name: Deploy
+jobs:
+  web-deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Setup SSH agent
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.PUB_KEY }}
+    - name: Add remote to hosts file
+      run: ssh-keyscan -H aquila.uberspace.de >> ~/.ssh/known_hosts
+    - name: Upload
+      run: rsync -avzr --exclude 'data' --delete ${GITHUB_WORKSPACE}/html/ janoelze@aquila.uberspace.de:/var/www/virtual/janoelze/endtime-instruments.org/apol/
+    - name: Update .htaccess
+      run: ssh janoelze@aquila.uberspace.de "mv /var/www/virtual/janoelze/endtime-instruments.org/apol/.htaccess-prod /var/www/virtual/janoelze/endtime-instruments.org/apol/.htaccess"
