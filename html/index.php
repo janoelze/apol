@@ -91,7 +91,13 @@ class Helpers
                 'href' => self::get_base_url() . '/subscriptions',
                 'icon' => __DIR__ . '/img/list.svg',
                 'class' => self::url_includes('subscriptions') ? 'active' : '',
-                'label' => 'Subscriptions',
+                'label' => 'Subs',
+            ],
+            [
+                'href' => self::get_base_url() . '/settings',
+                'icon' => __DIR__ . '/img/list.svg',
+                'class' => self::url_includes('settings') ? 'active' : '',
+                'label' => 'Settings',
             ]
         ];
     }
@@ -260,6 +266,12 @@ $router->post('/subscriptions', function (ServerRequest $request) use ($t, $r, $
     $subscriptions = $body['subscriptions'] ?? '';
     $lines = explode("\n", $subscriptions);
     return 'a';
+});
+
+$router->get('/settings', function (ServerRequest $request) use ($t, $r, $s) {
+    return $t->render('settings', [
+
+    ]);
 });
 
 $router->dispatch();
