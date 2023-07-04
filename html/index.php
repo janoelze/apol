@@ -143,6 +143,10 @@ class Helpers
             return '/apol';
         }
     }
+    public static function is_production()
+    {
+        return !self::url_includes('localhost');
+    }
     public static function get_host($url)
     {
         return parse_url($url, PHP_URL_HOST);

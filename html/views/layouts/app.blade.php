@@ -8,6 +8,15 @@
         <style>
             {!! Helpers::embed('apol.css') !!}
         </style>
+        @if(Helpers::is_production())
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-GLLFFQ7PRP"></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-GLLFFQ7PRP');
+            </script>
+        @endif
     </head>
     <body>
         @if(isset($is_content_fetch) && $is_content_fetch || !$async_load)
