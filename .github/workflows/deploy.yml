@@ -12,7 +12,7 @@ jobs:
       with:
         php-version: '8.1'
     - name: Install dependencies
-      run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+      run: cd html/ && composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
     - name: Setup SSH agent
       uses: webfactory/ssh-agent@v0.7.0
       with:
