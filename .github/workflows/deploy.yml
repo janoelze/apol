@@ -7,6 +7,12 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+    - name: Install dependencies
+      run: cd html/ && composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
     - name: Setup SSH agent
       uses: webfactory/ssh-agent@v0.7.0
       with:
@@ -14,4 +20,6 @@ jobs:
     - name: Add remote to hosts file
       run: ssh-keyscan -H aquila.uberspace.de >> ~/.ssh/known_hosts
     - name: Upload
-      run: rsync -avzr --exclude 'data' --delete ${GITHUB_WORKSPACE}/html/ janoelze@aquila.uberspace.de:/home/janoelze/endtime-instruments.org/apol/
+      run: rsync -avzr --exclude 'data' --delete ${GITHUB_WORKSPACE}/html/ janoelze@aquila.uberspace.de:/var/www/virtual/janoelze/endtime-instruments.org/apol/
+    - name: Update .htaccess
+      run: ssh janoelze@aquila.uberspace.de "mv /var/www/virtual/janoelze/endtime-instruments.org/apol/.htaccess-prod /var/www/virtual/janoelze/endtime-instruments.org/apol/.htaccess"

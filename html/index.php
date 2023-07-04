@@ -91,10 +91,36 @@ class Helpers
                 'href' => self::get_base_url() . '/subscriptions',
                 'icon' => __DIR__ . '/img/list.svg',
                 'class' => self::url_includes('subscriptions') ? 'active' : '',
-                'label' => 'Subscriptions',
+                'label' => 'Subs',
+            ],
+            [
+                'href' => self::get_base_url() . '/settings',
+                'icon' => __DIR__ . '/img/list.svg',
+                'class' => self::url_includes('settings') ? 'active' : '',
+                'label' => 'Settings',
             ]
         ];
     }
+
+    public static function get_settings() {
+        return [
+            [
+                'name' => 'Colorful Nests',
+                'type' => 'toggle',
+                'defaultValue' => false,
+            ]
+        ];
+    }
+
+    public static function set_setting($name, $value) {
+        $settings = self::get_settings();
+        foreach ($settings as $setting) {
+            if ($setting['name'] === $name) {
+                $setting['activation_func']($value);
+            }
+        }
+    }
+
     public static function extract_subreddit_id(){
         $url = $_SERVER['REQUEST_URI'];
         $matches = [];
@@ -323,6 +349,10 @@ $router->get($base_url . '/get-video-embed', function (ServerRequest $request) u
     return $t->render('subscriptions', [
         'arr' => $arr
     ]);
+});
+
+$router->get('/settings', function (ServerRequest $request) use ($t, $r, $s) {
+    return $t->render('settings', []);
 });
 
 $router->dispatch();
