@@ -17,7 +17,7 @@
       <img src="{{ $picture['src'] }}" />
     </div>
   @endif
-  @if(!$is_comments_page && $data['url'] ?? false)
+  @if($data['url'] ?? false)
     <div class="url tint-bg-up-2">
       <div class="url-icon tint-fg-up-35">{!! Helpers::embed('./img/link.svg') !!}</div>
       <div class="url-text tint-fg-up-35">
@@ -29,8 +29,8 @@
     </div>
   @endif
   <div class="meta">
-    <div class="tint-fg-up-30">{!! Helpers::embed('./img/arrow-up.svg') !!} {{ Helpers::formatk($data['ups']) }}</div>
-    <div class="tint-fg-up-30">{!! Helpers::embed('./img/message-circle.svg') !!} {{ Helpers::formatk($data['num_comments']) }}</div>
-    <div class="tint-fg-up-30">{!! Helpers::embed('./img/clock.svg') !!} {{ Helpers::relative_time($data['created_utc']) }}</div>
+    <div class="tint-fg-up-35">{!! Helpers::embed('./img/arrow-up.svg') !!} {{ Helpers::formatk($data['ups']) }}</div>
+    <div class="tint-fg-up-35">{!! Helpers::embed('./img/message-circle.svg') !!} {{ Helpers::formatk($data['num_comments']) }}</div>
+    <div class="tint-fg-up-35">{!! Helpers::embed('./img/clock.svg') !!} {{ Helpers::relative_time($data['created_utc']) }}</div>
   </div>
 </a>

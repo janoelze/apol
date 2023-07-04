@@ -1,3 +1,7 @@
+:root {
+    --border-radius: 8px;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -15,82 +19,6 @@ body {
 a {
     color: #4B96F7;
 }
-
-.header {
-    background-color: #1F222E;
-    padding: 0 17px;
-    position: sticky;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    top: 0;
-    box-shadow: 0px 0.5px 0px 0px #43454C;
-}
-
-.header>div {
-    height: 100%;
-}
-
-.header-title {
-    font-size: 18px;
-    font-weight: 500;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    text-align: center;
-}
-
-.header-title .icon svg {
-    height: 20px;
-    width: auto;
-    position: relative;
-    top: 2.5px;
-}
-
-.header-action {
-    width: 15%;
-    color: #4B96F7;
-}
-
-.header .header-action.right .header-action-inner {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-.header-action button {
-    color: inherit;
-    background-color: transparent;
-    line-height: 0;
-    border: none;
-    height: 60px;
-    padding: 10px 0px 10px 0px;
-}
-
-.header-action button:disabled {
-    color: #616269;
-}
-
-.header-action svg {
-    height: 18px;
-    width: auto;
-}
-
-.story-list {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-    flex-direction: column;
-}
-
-.story-preview img {
-    max-width: 100%;
-    border-radius: 10px;
-}
-
 
 .meta {
     display: flex;
@@ -115,113 +43,6 @@ a {
     height: 18px;
 }
 
-
-/* comment */
-
-.comments-list {
-    display: flex;
-    flex-direction: column;
-    padding: 10px 5px 10px 5px;
-    overflow: auto;
-    background-color: #21242D;
-}
-
-.comment-wrap {
-    padding: 0 5px 0 5px;
-    padding-top: 0px;
-}
-
-.comment {
-    /* padding: px; */
-    font-size: 14.5px;
-    line-height: 1.35em;
-}
-
-.comment-replies {
-    overflow: auto;
-    padding-left: 15px;
-}
-
-.comment .comment-author {
-    font-weight: 600;
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-}
-
-.comment .comment-author span {
-    color: #616269;
-    font-weight: 500;
-}
-
-.comment-container {
-    border-radius: 5px;
-    background-color: rgba(0, 0, 0, 0.1);
-    box-shadow: inset 0px 0px 0px 1px #43454C;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    margin: 0px 0 10px 0;
-}
-
-.comment .comment-body {
-    /* margin-top: 1em; */
-    overflow: hidden;
-}
-
-.comment .comment-body img {
-    max-width: 100%;
-    height: auto;
-}
-
-.comment .comment-body p {
-    margin: 0.75em 0 0 0;
-}
-
-.comment .comment-body p:last-child {
-    margin-bottom: 0;
-}
-
-.comment .comment-body hr {
-    display: none;
-}
-
-.comment.closed .comment-container {
-    /* box-shadow: none; */
-    /* background-color: transparent; */
-}
-
-.comment.closed .comment-body {
-    display: none;
-}
-
-.comment.closed .comment-replies {
-    display: none;
-}
-
-
-/* subreddit-selector */
-
-.subreddit-selector {
-    display: flex;
-    flex-direction: column;
-}
-
-.subreddit-selector-item {
-    text-align: center;
-    padding: 15px 0;
-    cursor: pointer;
-    background-color: #21242D;
-    box-shadow: inset 0px -0.5px 0px 0px #43454C;
-}
-
-.subreddit-selector-item:last-child {
-    box-shadow: none;
-}
-
-
-/* */
-
 .list-t3 {
     display: flex;
     gap: 5px;
@@ -230,7 +51,6 @@ a {
 
 .thing.t3 {
     text-decoration: none;
-    /* background-color: #21242D; */
     display: flex;
     flex-direction: column;
     padding: 15px 13px;
@@ -254,10 +74,7 @@ a {
     justify-content: space-between;
     gap: 10px;
     padding: 12px 10px;
-    border-radius: 5px;
-}
-
-.thing.t3 .url .url-icon {
+    border-radius: var(--border-radius);
 }
 
 .thing.t3 .url .url-icon svg {
@@ -276,7 +93,7 @@ a {
 .thing.t3 .image img {
     width: 100%;
     max-width: 100%;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     height: auto;
 }
 
@@ -284,7 +101,7 @@ a {
     background-color: rgba(0, 0, 0, 0.2);
     padding: 10px;
     margin-bottom: 10px;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     overflow: hidden;
 }
 
@@ -303,7 +120,7 @@ a {
     width: 100%;
     max-width: 100%;
     height: auto;
-    border-radius: 4px;
+    border-radius: var(--border-radius);
 }
 
 .md blockquote {
@@ -320,6 +137,10 @@ a {
 
 .md blockquote p:before {
     content: "> ";
+}
+
+.md h2 {
+    font-size: 16px;
 }
 
 .list-t1 {
@@ -405,7 +226,7 @@ a {
 
 .section {
     padding: 15px;
-    border-radius: 12px;
+    border-radius: calc(var(--border-radius) * 2);
     background-color: #21242D;
     overflow: auto;
 }
@@ -429,7 +250,7 @@ a {
 .sections form textarea {
     width: 100%;
     padding: 10px;
-    border-radius: 4px;
+    border-radius: var(--border-radius);
     background-color: transparent;
     border: 2px solid #43454C;
     overflow: auto;
@@ -441,7 +262,7 @@ a {
 .generic-list {
     display: flex;
     flex-direction: column;
-    border-radius: 12px;
+    border-radius: calc(var(--border-radius) * 2);
     overflow: auto;
     gap: 1px
 }

@@ -8,7 +8,7 @@
         @if(count($arr))
             <div class="generic-list">
                 @foreach ($arr as $subreddit)
-                    <a class="tint-bg-down-2 tint-fg-up-65" href="{{ Helpers::get_base_url() }}/r/{{ $subreddit }}">/r/{{ $subreddit }}</a>
+                    <a class="tint-bg-down-2 tint-fg-up-58" href="{{ Helpers::get_base_url() }}/r/{{ $subreddit }}">/r/{{ $subreddit }}</a>
                 @endforeach
             </div>
         @else

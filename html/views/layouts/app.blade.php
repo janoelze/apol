@@ -4,8 +4,8 @@
         <meta name="viewport" content="width=device-width, viewport-fit=cover,initial-scale=1.0,user-scalable=no" />
         <script src="https://unpkg.com/htmx.org@1.9.2/dist/htmx.min.js"></script>
         <style>
-            {!! Helpers::embed('tinting.css') !!}
             {!! Helpers::embed('apol.css') !!}
+            {!! Helpers::embed('tinting.css') !!}
         </style>
         @if(Helpers::is_production())
             <script async src="https://www.googletagmanager.com/gtag/js?id=G-GLLFFQ7PRP"></script>
