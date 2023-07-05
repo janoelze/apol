@@ -2,3 +2,4 @@ build
 html/vendor
 .DS_Store
 blade-cache
+html/blade-cache
