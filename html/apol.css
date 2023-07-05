@@ -1,5 +1,5 @@
 :root {
-    --border-radius: 8px;
+    --border-radius: 10px;
     --side-margin: 13px;
 }
 
@@ -139,10 +139,11 @@ a {
 
 .md blockquote {
     overflow: auto;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.07);
     padding-bottom: 0.5em;
     padding-left: 0.5em;
     color: #94969C;
+    border-radius: calc(var(--border-radius) * 0.5);
 }
 
 .md blockquote p:first-child {
