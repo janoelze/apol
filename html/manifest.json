@@ -1,13 +1,13 @@
 {
     "name": "Apol",
     "short_name": "Apol",
-    "start_url": "/?context=standalone",
+    "start_url": "/apol?context=pwa",
     "display": "standalone",
     "description": "A read-only client for reddit",
     "theme_color": "#000000",
     "background_color": "#000000",
     "orientation": "any",
-    "scope": "/",
+    "scope": "/apol",
     "icons": [{
         "src": "https://endtime-instruments.org/apol/icon.png",
         "sizes": "512x512",
@@ -17,7 +17,7 @@
     "prefer_related_applications": false,
     "shortcuts": [{
         "name": "Apol",
-        "url": "/",
+        "url": "/apol",
         "description": "A read-only client for reddit"
     }]
 }
