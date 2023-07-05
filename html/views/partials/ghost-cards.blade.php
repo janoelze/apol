@@ -8,6 +8,7 @@
             flex-direction: column;
             width: 100%;
             gap: 5px;
+            padding-top: 5px;
         }
 
         @keyframes fade-in {

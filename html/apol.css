@@ -165,13 +165,14 @@ a {
 /* listing */
 
 .listing {
-    margin-top: 5px;
+    padding-top: 5px;
 }
 
 
 /* tab-title */
 
 .title-bar {
+    z-index: 10;
     position: sticky;
     top: 0;
     left: 0;
@@ -191,6 +192,7 @@ a {
 /* tab-bar */
 
 .tab-bar {
+    z-index: 10;
     /* box-shadow: 0px -0.5px 0px 0px #43454C; */
     position: fixed;
     bottom: 0;
