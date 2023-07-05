@@ -4,7 +4,7 @@
 
 <div class="thing t1">
   @if($data['author'] ?? false)
-    <div class="comment-body">
+    <div class="comment-body tint-bg-down-3 tint-fg-up-51">
       <div class="meta">
         <div class="text">{{ $data['author'] }}</div>
         <div>{!! Helpers::embed('./img/arrow-up.svg') !!} {{ Helpers::formatk($data['ups']) }}</div>

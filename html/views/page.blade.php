@@ -4,9 +4,9 @@
  
 @section('content')
     @if($subreddit_id ?? false)
-        <div class="tab-title tint-bg-down-2">/r/{{ $subreddit_id }}</div>
+        <div class="tab-title tint-bg-down-5">/r/{{ $subreddit_id }}</div>
     @else
-        <div class="tab-title tint-bg-down-2">Home</div>
+        <div class="tab-title tint-bg-down-5">Home</div>
     @endif
     <div class="listing">
         @foreach ($data as $key => $entry)
@@ -18,6 +18,7 @@
                         @endphp
                         @include('partials.post', ['data' => $value['data'], 'is_last' => $is_last, 'is_comments_page' => $is_comments_page])
                     @endforeach
+                    <div class="loading-indicator"><span class="tint-fg-up-16">Loading...</span></div>
                 </div>
             @endif
             @if ($entry['kind'] == 'Listing' && count($entry['data']['children']) && $entry['data']['children'][0]['kind'] == 't1')

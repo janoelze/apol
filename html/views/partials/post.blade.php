@@ -3,7 +3,7 @@
 @else
   @if($is_last)
     {{-- hx-get="{!! Helpers::get_next_page($data) !!}" hx-select=".list-t3" --}}
-    <a class="thing t3 tint-bg-down-2" href="{{ Helpers::get_base_url() }}{{ $data['permalink'] }}" hx-get="{!! Helpers::get_next_page($value['data']) !!}" hx-trigger="revealed" hx-select=".list-t3 .thing" hx-swap="afterend">
+    <a class="thing t3 tint-bg-down-2" href="{{ Helpers::get_base_url() }}{{ $data['permalink'] }}" hx-get="{!! Helpers::get_next_page($value['data']) !!}" hx-trigger="revealed" hx-select=".list-t3 .thing" hx-swap="afterend" hx-indicator=".loading-indicator">
   @else
     <a class="thing t3 tint-bg-down-2" href="{{ Helpers::get_base_url() }}{{ $data['permalink'] }}" >
   @endif

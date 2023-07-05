@@ -1,5 +1,6 @@
 :root {
     --border-radius: 8px;
+    --side-margin: 13px;
 }
 
 * {
@@ -11,13 +12,16 @@
 body {
     font-family: -apple-system, sans-serif;
     font-size: 16px;
-    background-color: #2C2F37;
     color: #EEEFF4;
     overflow-x: hidden;
 }
 
 a {
     color: #4B96F7;
+}
+
+.container {
+    padding-bottom: 150px;
 }
 
 .meta {
@@ -53,7 +57,7 @@ a {
     text-decoration: none;
     display: flex;
     flex-direction: column;
-    padding: 15px 13px;
+    padding: calc(var(--side-margin)*1.19) var(--side-margin);
     gap: 13px;
     color: #EEEFF4;
 }
@@ -98,7 +102,6 @@ a {
 }
 
 .thing.t1 .comment-body {
-    background-color: rgba(0, 0, 0, 0.2);
     padding: 10px;
     margin-bottom: 10px;
     border-radius: var(--border-radius);
@@ -144,12 +147,10 @@ a {
 }
 
 .list-t1 {
-    /* box-shadow: inset 0px 0.5px 0px 0px #43454C; */
     padding: 13px;
     display: flex;
     flex-direction: column;
     gap: 0px;
-    background-color: #21242D;
 }
 
 .list-t1.replies {
@@ -225,9 +226,8 @@ a {
 }
 
 .section {
-    padding: 15px;
+    padding: calc(var(--side-margin) * 2);
     border-radius: calc(var(--border-radius) * 2);
-    background-color: #21242D;
     overflow: auto;
 }
 
@@ -243,8 +243,7 @@ a {
     display: flex;
     gap: 10px;
     flex-direction: column;
-    padding: 15px;
-    padding-bottom: 100px;
+    padding: calc(var(--side-margin) * 1);
 }
 
 .sections form textarea {
@@ -315,4 +314,17 @@ a {
     top: 2px;
     left: 38px;
     transition: left 0.4s;
+}
+
+.loading-indicator {
+    opacity: 0;
+    display: flex;
+    padding: 40px 0 0 0;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.loading-indicator.htmx-request {
+    opacity: 1;
+    transition: opacity 2s;
 }

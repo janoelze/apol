@@ -27,13 +27,13 @@
             </script>
         @endif
     </head>
-    <body class="tint-bg-up-0">
+    <body class="tint-bg-down-5">
         @if(isset($is_content_fetch) && $is_content_fetch || !$async_load)
-            <div class="container">
+            <div class="container tint-bg-down-0">
                 @yield('content')
             </div>
         @else
-            <div class="container" hx-get="?fetch" hx-select=".container" hx-swap="outerHTML" hx-trigger="load">
+            <div class="container tint-bg-down-0" hx-get="?fetch" hx-select=".container" hx-swap="outerHTML" hx-trigger="load">
                 @include('partials.ghost-cards')
             </div>
         @endif
