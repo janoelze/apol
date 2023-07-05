@@ -123,6 +123,7 @@ class Helpers
 
     public static function extract_subreddit_id(){
         $url = $_SERVER['REQUEST_URI'];
+        $url = explode('?', $url)[0];
         $matches = [];
         preg_match('/\/r\/([^\/]+)/', $url, $matches);
         return $matches[1] ?? '';
@@ -286,6 +287,7 @@ $router->get($base_url . '.*', function (ServerRequest $request) use ($t, $r, $i
     return $t->render('page', [
         'data' => $data,
         'async_load' => true,
+        'page_title' => sprintf('r/%s', $subreddit_id),
         'is_content_fetch' => $is_content_fetch,
         'subreddit_id' => $subreddit_id,
         'is_comments_page' => $is_comments_page,
@@ -301,12 +303,14 @@ $router->get($base_url . '/subscriptions', function (ServerRequest $request) use
 
     return $t->render('subscriptions', [
         'arr' => $arr,
+        'page_title' => 'Subscriptions',
         'async_load' => false
     ]);
 });
 
 $router->get($base_url . '/settings', function (ServerRequest $request) use ($t, $r, $s, $is_content_fetch) {
     return $t->render('settings', [
+        'page_title' => 'Settings',
         'async_load' => false
     ]);
 });

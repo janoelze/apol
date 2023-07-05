@@ -1,13 +1,8 @@
 @extends('layouts.app')
- 
-@section('title', 'Page Title')
- 
+
+@section('title', $page_title)
+
 @section('content')
-    @if($subreddit_id ?? false)
-        <div class="tab-title tint-bg-down-5">/r/{{ $subreddit_id }}</div>
-    @else
-        <div class="tab-title tint-bg-down-5">Home</div>
-    @endif
     <div class="listing">
         @foreach ($data as $key => $entry)
             @if($entry['kind'] == 'Listing' && $entry['data']['children'] && $entry['data']['children'][0]['kind'] == 't3')

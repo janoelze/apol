@@ -1,9 +1,8 @@
 @extends('layouts.app')
  
-@section('title', 'Subscriptions')
+@section('title', $page_title)
  
 @section('content')
-    <div class="tab-title">Subscriptions</div>
     <div class="sections">
         @if(count($arr))
             <div class="generic-list">

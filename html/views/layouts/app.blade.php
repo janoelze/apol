@@ -28,6 +28,7 @@
         @endif
     </head>
     <body class="tint-bg-down-5">
+        @include('partials.title-bar', ['page_title' => $page_title])
         @if(isset($is_content_fetch) && $is_content_fetch || !$async_load)
             <div class="container tint-bg-down-0">
                 @yield('content')
