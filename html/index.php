@@ -78,13 +78,22 @@ class Helpers
         $secure_media = $data['secure_media'] ?? [];
 
         if (isset($secure_media['reddit_video'])) {
-            $fallback_url = $secure_media['reddit_video']['fallback_url'];
+            $m3u8_src = $secure_media['reddit_video']['hls_url'];
+
+            // var_dump($m3u8_url);
+
+            // $fallback_url = $secure_media['reddit_video']['fallback_url'];
             $width = $secure_media['reddit_video']['width'];
             $height = $secure_media['reddit_video']['height'];
             $poster = $data['thumbnail'];
 
+            // $fallback_url = str_replace('DASH_1080', 'DASH_720',
+            // $fallback_url);
+            // $fallback_url = str_replace('DASH_720', 'DASH_360', $fallback_url);
+
             return [
-                'src' => $fallback_url,
+                // 'src' => $fallback_url,
+                'm3u8_src' => $m3u8_src,
                 'poster' => $poster,
                 'width' => $width,
                 'height' => $height,

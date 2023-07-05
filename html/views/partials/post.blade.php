@@ -18,10 +18,24 @@
     </div>
   @endif
   @if($video = Helpers::get_embeddable_video($data))
-    <div class="video" style="aspect-ratio: {{ $video['width'] }}/{{ $video['height'] }};">
-      <video class="video" controls poster="{{ $video['poster'] }}">
-        <source src="{{ $video['src'] }}" type="video/mp4">
-      </video>
+    <div class="video">
+      <video id="video-{{ $data['name'] }}"></video>
+      <script>
+        if(Hls.isSupported()) {
+          var video = document.getElementById('video-{{ $data['name'] }}');
+          video.style.aspectRatio = '{{ $video['width'] }}/{{ $video['height'] }}';
+          video.muted = true;
+          video.poster = '{{ $video['poster'] }}';
+          video.autoplay = true;
+          video.playsinline = true;
+          var hls = new Hls();
+          hls.loadSource('{{ $video['m3u8_src'] }}');
+          hls.attachMedia(video);
+          hls.on(Hls.Events.MANIFEST_PARSED,function() {
+            video.play();
+          });
+        }
+      </script>
     </div>
   @endif
   @if($data['url'] ?? false)
