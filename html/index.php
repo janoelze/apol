@@ -102,25 +102,6 @@ class Helpers
         ];
     }
 
-    public static function get_settings() {
-        return [
-            [
-                'name' => 'Colorful Nests',
-                'type' => 'toggle',
-                'defaultValue' => false,
-            ]
-        ];
-    }
-
-    public static function set_setting($name, $value) {
-        $settings = self::get_settings();
-        foreach ($settings as $setting) {
-            if ($setting['name'] === $name) {
-                $setting['activation_func']($value);
-            }
-        }
-    }
-
     public static function extract_subreddit_id(){
         $url = $_SERVER['REQUEST_URI'];
         $url = explode('?', $url)[0];
@@ -170,6 +151,57 @@ class Helpers
         } else {
             return $val;
         }
+    }
+}
+
+class Settings
+{
+    public function __construct()
+    {
+        $this->initialize();
+    }
+
+    public static $defaultSettings = [
+        'Colorful Nests' => true,
+    ];
+
+    private static function getSettingsFromCookie()
+    {
+        $cookieContents = $_COOKIE['settings'] ?? '{}';
+        return json_decode($cookieContents, true);
+    }
+
+    private static function saveSettingsToCookie($settings)
+    {
+        $cookieContents = json_encode($settings);
+        setcookie('settings', $cookieContents, time() + (86400 * 30), "/");
+    }
+
+    public static function get($key)
+    {
+        $settings = self::getSettingsFromCookie();
+        return $settings[$key] ?? self::$defaultSettings[$key] ?? null;
+    }
+
+    public static function set($key, $value)
+    {
+        $key = urldecode($key);
+        $settings = self::getSettingsFromCookie();
+        $settings[$key] = $value;
+        self::saveSettingsToCookie($settings);
+    }
+
+    public static function getUserPreferences()
+    {
+        $userSettings = self::getSettingsFromCookie();
+        return array_merge(self::$defaultSettings, $userSettings);
+    }
+
+    private function initialize()
+    {
+        $settings = self::getSettingsFromCookie();
+        $mergedSettings = array_merge(self::$defaultSettings, $settings);
+        self::saveSettingsToCookie($mergedSettings);
     }
 }
 
@@ -315,4 +347,14 @@ $router->get($base_url . '/settings', function (ServerRequest $request) use ($t,
     ]);
 });
 
+$router->get($base_url . '/settings/toggle/{settingName}', function (ServerRequest $request, $settingName) use ($t) {
+    $settingName = urldecode($settingName);
+    $currentValue = Settings::get($settingName);
+    Settings::set($settingName, !$currentValue);
+    return $t->render('settings', [
+        'page_title' => 'Settings',
+        'async_load' => false
+    ]);
+});
+new Settings();
 $router->dispatch();

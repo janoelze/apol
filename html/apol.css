@@ -268,7 +268,7 @@ a {
     gap: 1px
 }
 
-.generic-list a {
+.generic-list>* {
     padding: 15px;
     text-decoration: none;
     display: flex;
@@ -292,7 +292,7 @@ a {
 }
 
 .np-outer-switch-on {
-    background: rgb(0, 202, 51);
+    background-color: rgb(3, 9, 20);
     transition: background 0.4s;
 }
 
