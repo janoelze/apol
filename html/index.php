@@ -81,8 +81,11 @@ class Helpers
             $fallback_url = $secure_media['reddit_video']['fallback_url'];
             $width = $secure_media['reddit_video']['width'];
             $height = $secure_media['reddit_video']['height'];
+            $poster = $data['thumbnail'];
+
             return [
                 'src' => $fallback_url,
+                'poster' => $poster,
                 'width' => $width,
                 'height' => $height,
             ];

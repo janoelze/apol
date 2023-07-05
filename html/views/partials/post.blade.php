@@ -19,7 +19,7 @@
   @endif
   @if($video = Helpers::get_embeddable_video($data))
     <div class="video" style="aspect-ratio: {{ $video['width'] }}/{{ $video['height'] }};">
-      <video class="video" controls>
+      <video class="video" controls poster="{{ $video['poster'] }}">
         <source src="{{ $video['src'] }}" type="video/mp4">
       </video>
     </div>
