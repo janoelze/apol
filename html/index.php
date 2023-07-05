@@ -73,6 +73,21 @@ class Helpers
         $updated_url = $url_parts['path'] . '?' . $query;
         return $updated_url;
     }
+    public static function get_embeddable_video($data){
+        // get fallback_url
+        $secure_media = $data['secure_media'] ?? [];
+
+        if (isset($secure_media['reddit_video'])) {
+            $fallback_url = $secure_media['reddit_video']['fallback_url'];
+            $width = $secure_media['reddit_video']['width'];
+            $height = $secure_media['reddit_video']['height'];
+            return [
+                'src' => $fallback_url,
+                'width' => $width,
+                'height' => $height,
+            ];
+        }
+    }
     public static function get_embeddable_picture($data)
     {
         $url = $data['url'];

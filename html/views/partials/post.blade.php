@@ -17,6 +17,13 @@
       <img src="{{ $picture['src'] }}" />
     </div>
   @endif
+  @if($video = Helpers::get_embeddable_video($data))
+    <div class="video" style="aspect-ratio: {{ $video['width'] }}/{{ $video['height'] }};">
+      <video class="video" controls>
+        <source src="{{ $video['src'] }}" type="video/mp4">
+      </video>
+    </div>
+  @endif
   @if($data['url'] ?? false)
     <a href="{{$data['url']}}" class="url tint-bg-up-2">
       <div class="url-icon tint-fg-up-35">{!! Helpers::embed('./img/link.svg') !!}</div>
