@@ -10,6 +10,7 @@ use MiladRahimi\PhpRouter\Router;
 use Laminas\Diactoros\Response\JsonResponse;
 use MiladRahimi\PhpRouter\Routing\Route;
 use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\Response\RedirectResponse;
 
 foreach (glob(__DIR__ . '/blade-cache/*.php') as $filename) {
     unlink($filename);
@@ -163,6 +164,7 @@ class Settings
 
     public static $defaultSettings = [
         'Colorful Nests' => true,
+        'Blur NSFW' => true
     ];
 
     private static function getSettingsFromCookie()
@@ -189,19 +191,29 @@ class Settings
         $settings = self::getSettingsFromCookie();
         $settings[$key] = $value;
         self::saveSettingsToCookie($settings);
+        //override the session variable as well, so we always have up to date values
+        $_COOKIE['settings'] = json_encode($settings);
     }
 
     public static function getUserPreferences()
     {
         $userSettings = self::getSettingsFromCookie();
-        return array_merge(self::$defaultSettings, $userSettings);
+        $filteredSettings = array_filter($userSettings, function ($key) {
+            return array_key_exists($key, self::$defaultSettings);
+        }, ARRAY_FILTER_USE_KEY);
+        return array_merge(self::$defaultSettings, $filteredSettings);
+    }
+    public static function revertToDefaultSettings()
+    {
+        self::saveSettingsToCookie(self::$defaultSettings);
     }
 
     private function initialize()
     {
         $settings = self::getSettingsFromCookie();
-        $mergedSettings = array_merge(self::$defaultSettings, $settings);
-        self::saveSettingsToCookie($mergedSettings);
+        if (empty($settings)) {
+            self::saveSettingsToCookie(self::$defaultSettings);
+        }
     }
 }
 
@@ -289,6 +301,7 @@ class Subscriptions
 $t = new Template();
 $r = new RedditProxy();
 $s = new Subscriptions();
+$p = new Settings();
 $base_url = Helpers::get_base_url();
 
 // defaults
@@ -347,14 +360,17 @@ $router->get($base_url . '/settings', function (ServerRequest $request) use ($t,
     ]);
 });
 
-$router->get($base_url . '/settings/toggle/{settingName}', function (ServerRequest $request, $settingName) use ($t) {
+$router->get($base_url . '/settings/toggle/{settingName}', function (ServerRequest $request, $settingName) use ($t, $base_url) {
     $settingName = urldecode($settingName);
     $currentValue = Settings::get($settingName);
     Settings::set($settingName, !$currentValue);
-    return $t->render('settings', [
-        'page_title' => 'Settings',
-        'async_load' => false
-    ]);
+    return new RedirectResponse($base_url . '/settings');
 });
-new Settings();
+
+$router->get($base_url . '/settings/revert', function (ServerRequest $request) use ($t, $base_url) {
+    Settings::revertToDefaultSettings();
+    return new RedirectResponse($base_url . '/settings');
+});
+
+
 $router->dispatch();
