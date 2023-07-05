@@ -1,11 +1,9 @@
 {
     "name": "Apol",
-    "short_name": "This name will show in your Windows taskbar, in the start menu, and Android homescreen",
-    "start_url": "The URL that should be loaded when your application is opened",
+    "short_name": "Apol",
+    "start_url": "/?context=standalone",
     "display": "standalone",
-    "description": "A description for your application",
-    "lang": " The default language of your application",
-    "dir": "auto",
+    "description": "A read-only client for reddit",
     "theme_color": "#000000",
     "background_color": "#000000",
     "orientation": "any",
@@ -20,6 +18,6 @@
     "shortcuts": [{
         "name": "Apol",
         "url": "/",
-        "description": "A Read only client for Reddit"
+        "description": "A read-only client for reddit"
     }]
 }
