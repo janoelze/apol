@@ -155,98 +155,6 @@ class Helpers
     }
 }
 
-class Settings
-{
-    public function __construct()
-    {
-        $this->initialize();
-    }
-
-    public static $defaultSettings = [
-        [
-            'label' => 'Colorful Nests',
-            'id' => 'colorful_nests',
-            'value' => true,
-            'type' => 'boolean',
-        ],
-        [
-            'label' => 'Blur NSFW',
-            'id' => 'blur_nsfw',
-            'value' => true,
-            'type' => 'boolean',
-        ],
-    ];
-
-    private static function getPreferencesFromCookie()
-    {
-        $cookieContents = $_COOKIE['preferences'] ?? '{}';
-        return json_decode($cookieContents, true);
-    }
-
-    private static function savePreferencesToCookie($preferences)
-    {
-        $cookieContents = json_encode($preferences);
-        setcookie('preferences', $cookieContents, time() + (86400 * 30), "/");
-    }
-
-    public static function getUserPreference($key)
-    {
-        $preferences = self::getPreferencesFromCookie();
-        foreach ($preferences as $preference) {
-            if ($preference['id'] == $key) {
-                return $preference['value'];
-            }
-        }
-        foreach (self::$defaultSettings as $defaultSetting) {
-            if ($defaultSetting['id'] == $key) {
-                return $defaultSetting['value'];
-            }
-        }
-        return null;
-    }
-
-    public static function setUserPreference($key, $value)
-    {
-        $key = urldecode($key);
-        $preferences = self::getPreferencesFromCookie();
-        foreach ($preferences as &$preference) {
-            if ($preference['id'] == $key) {
-                $preference['value'] = $value;
-            }
-        }
-        self::savePreferencesToCookie($preferences);
-        //override the session variable as well, so we always have up to date values
-        $_COOKIE['preferences'] = json_encode($preferences);
-    }
-
-    public static function getUserPreferences()
-    {
-        $userPreferences = self::getPreferencesFromCookie();
-        $defaultPreferences = array_column(self::$defaultSettings, null, 'id');
-        $userPreferences = array_column($userPreferences, null, 'id');
-
-        $mergedPreferences = $userPreferences + $defaultPreferences;
-
-        // If you want to preserve the original order of defaultSettings:
-        $mergedPreferences = array_merge($defaultPreferences, $mergedPreferences);
-
-        return array_values($mergedPreferences);
-    }
-
-    public static function revertToDefaultPreferences()
-    {
-        self::savePreferencesToCookie(self::$defaultSettings);
-    }
-
-    private function initialize()
-    {
-        $preferences = self::getPreferencesFromCookie();
-        if (empty($preferences)) {
-            self::savePreferencesToCookie(self::$defaultSettings);
-        }
-    }
-}
-
 # Types of Thing
 # t1 Comment
 # t2 Account
@@ -332,13 +240,55 @@ class UserSettings {
     function __construct() {
         $cookie_contents = $_COOKIE['user_settings'] ?? '[]';
         $this->user_settings = json_decode($cookie_contents, true);
+        $this->default_settings = [
+            [
+                'label' => 'Colorful nesting',
+                'id' => 'colorful_nesting',
+                'value' => true,
+                'type' => 'boolean',
+            ],
+            [
+                'label' => 'Blur NSFW content',
+                'id' => 'blur_nsfw',
+                'value' => true,
+                'type' => 'boolean',
+            ],
+            [
+                'label' => 'Theme',
+                'id' => 'theme',
+                'value' => 'dark',
+                'type' => 'select',
+                'options' => [
+                    [
+                        'label' => 'Dark',
+                        'value' => 'dark',
+                    ],
+                    [
+                        'label' => 'Light',
+                        'value' => 'light',
+                    ],
+                ]
+            ],
+        ];
+    }
+    public function get_default_settings()
+    {
+        return $this->default_settings;
     }
     public function persist() {
         $cookie_contents = json_encode($this->user_settings);
         setcookie('user_settings', $cookie_contents, time() + (86400 * 30), "/");
     }
     public function get_user_settings() {
-        return $this->user_settings;
+        $user_settings = [];
+
+        foreach($this->get_default_settings() as $setting) {
+            $new_setting = $setting;
+            $new_setting['value'] = $this->user_settings[$setting['id']] ?? $setting['value'];
+            $user_settings[] = $new_setting;
+        }
+
+        return $user_settings;
     }
     public function set_user_setting($name, $value) {
         $this->user_settings[$name] = $value;
@@ -405,31 +355,17 @@ $router->get($base_url . '/subscriptions', function (ServerRequest $request) use
 $router->get($base_url . '/settings', function (ServerRequest $request) use ($t, $r, $s, $us, $is_content_fetch) {
     return $t->render('settings', [
         'page_title' => 'Settings',
+        'settings' => $us->get_user_settings(),
         'async_load' => false
     ]);
 });
 
-$router->put($base_url . '/settings', function (ServerRequest $request) use ($t, $r, $s, $us, $is_content_fetch) {
-    $data = $request->getParsedBody();
-    $us = $us->get_user_settings();
-    
-    return $t->render('settings', [
-        'page_title' => 'Settings',
-        'async_load' => false
-    ]);
+$router->post($base_url . '/settings', function (ServerRequest $request) use ($us, $base_url) {
+    foreach ($_POST as $key => $value) {
+        $us->set_user_setting($key, $value);
+    }
+    usleep(50);
+    return 'OK';
 });
-
-$router->get($base_url . '/settings/toggle/{settingName}', function (ServerRequest $request, $settingName) use ($t, $base_url) {
-    $settingName = urldecode($settingName);
-    $currentValue = Settings::getUserPreference($settingName);
-    Settings::setUserPreference($settingName, !$currentValue);
-    return new RedirectResponse($base_url . '/settings');
-});
-
-$router->get($base_url . '/settings/revert', function (ServerRequest $request) use ($t, $base_url) {
-    Settings::revertToDefaultSettings();
-    return new RedirectResponse($base_url . '/settings');
-});
-
 
 $router->dispatch();
