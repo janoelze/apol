@@ -1,6 +1,6 @@
-<a href="/settings/toggle/{{ urlencode($settingName) }}"
+<a href="/settings/toggle/{{ urlencode($preferenceId) }}"
    class="np-outer-switch @if($isEnabled) np-outer-switch-on @else np-outer-switch-off @endif"
-   hx-get="/settings/toggle/{{ urlencode($settingName) }}"
+   hx-get="/settings/toggle/{{ urlencode($preferenceId) }}"
    hx-trigger="click"
    hx-target="#body"
    hx-swap="outerHTML">

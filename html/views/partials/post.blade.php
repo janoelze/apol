@@ -3,12 +3,12 @@
 @else
   @if($is_last)
     {{-- hx-get="{!! Helpers::get_next_page($data) !!}" hx-select=".list-t3" --}}
-    <a class="thing t3 tint-bg-down-2" href="{{ Helpers::get_base_url() }}{{ $data['permalink'] }}" hx-get="{!! Helpers::get_next_page($value['data']) !!}" hx-trigger="revealed" hx-select=".list-t3 .thing" hx-swap="afterend" hx-indicator=".loading-indicator">
+    <a class="thing t3 tint-bg-down-2 {{ $data['over_18'] ? 'is-nsfw' : '' }}" href="{{ Helpers::get_base_url() }}{{ $data['permalink'] }}" hx-get="{!! Helpers::get_next_page($value['data']) !!}" hx-trigger="revealed" hx-select=".list-t3 .thing" hx-swap="afterend" hx-indicator=".loading-indicator">
   @else
-    <a class="thing t3 tint-bg-down-2" href="{{ Helpers::get_base_url() }}{{ $data['permalink'] }}" >
+    <a class="thing t3 tint-bg-down-2 {{ $data['over_18'] ? 'is-nsfw' : '' }}" href="{{ Helpers::get_base_url() }}{{ $data['permalink'] }}" >
   @endif
 @endif
-  <div class="title tint-fg-up-65">{{ $data['title'] }}</div>
+  <div class="title tint-fg-up-65 ">{{ $data['title'] }}</div>
   @if($is_comments_page && $data['selftext_html'] ?? false)
     <div class="selftext">{!! htmlspecialchars_decode($data['selftext_html']) !!}</div>
   @endif

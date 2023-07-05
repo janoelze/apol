@@ -163,56 +163,86 @@ class Settings
     }
 
     public static $defaultSettings = [
-        'Colorful Nests' => true,
-        'Blur NSFW' => true
+        [
+            'label' => 'Colorful Nests',
+            'id' => 'colorful_nests',
+            'value' => true,
+            'type' => 'boolean',
+        ],
+        [
+            'label' => 'Blur NSFW',
+            'id' => 'blur_nsfw',
+            'value' => true,
+            'type' => 'boolean',
+        ],
     ];
 
-    private static function getSettingsFromCookie()
+    private static function getPreferencesFromCookie()
     {
-        $cookieContents = $_COOKIE['settings'] ?? '{}';
+        $cookieContents = $_COOKIE['preferences'] ?? '{}';
         return json_decode($cookieContents, true);
     }
 
-    private static function saveSettingsToCookie($settings)
+    private static function savePreferencesToCookie($preferences)
     {
-        $cookieContents = json_encode($settings);
-        setcookie('settings', $cookieContents, time() + (86400 * 30), "/");
+        $cookieContents = json_encode($preferences);
+        setcookie('preferences', $cookieContents, time() + (86400 * 30), "/");
     }
 
-    public static function get($key)
+    public static function getUserPreference($key)
     {
-        $settings = self::getSettingsFromCookie();
-        return $settings[$key] ?? self::$defaultSettings[$key] ?? null;
+        $preferences = self::getPreferencesFromCookie();
+        foreach ($preferences as $preference) {
+            if ($preference['id'] == $key) {
+                return $preference['value'];
+            }
+        }
+        foreach (self::$defaultSettings as $defaultSetting) {
+            if ($defaultSetting['id'] == $key) {
+                return $defaultSetting['value'];
+            }
+        }
+        return null;
     }
 
-    public static function set($key, $value)
+    public static function setUserPreference($key, $value)
     {
         $key = urldecode($key);
-        $settings = self::getSettingsFromCookie();
-        $settings[$key] = $value;
-        self::saveSettingsToCookie($settings);
+        $preferences = self::getPreferencesFromCookie();
+        foreach ($preferences as &$preference) {
+            if ($preference['id'] == $key) {
+                $preference['value'] = $value;
+            }
+        }
+        self::savePreferencesToCookie($preferences);
         //override the session variable as well, so we always have up to date values
-        $_COOKIE['settings'] = json_encode($settings);
+        $_COOKIE['preferences'] = json_encode($preferences);
     }
 
     public static function getUserPreferences()
     {
-        $userSettings = self::getSettingsFromCookie();
-        $filteredSettings = array_filter($userSettings, function ($key) {
-            return array_key_exists($key, self::$defaultSettings);
-        }, ARRAY_FILTER_USE_KEY);
-        return array_merge(self::$defaultSettings, $filteredSettings);
+        $userPreferences = self::getPreferencesFromCookie();
+        $defaultPreferences = array_column(self::$defaultSettings, null, 'id');
+        $userPreferences = array_column($userPreferences, null, 'id');
+
+        $mergedPreferences = $userPreferences + $defaultPreferences;
+
+        // If you want to preserve the original order of defaultSettings:
+        $mergedPreferences = array_merge($defaultPreferences, $mergedPreferences);
+
+        return array_values($mergedPreferences);
     }
-    public static function revertToDefaultSettings()
+
+    public static function revertToDefaultPreferences()
     {
-        self::saveSettingsToCookie(self::$defaultSettings);
+        self::savePreferencesToCookie(self::$defaultSettings);
     }
 
     private function initialize()
     {
-        $settings = self::getSettingsFromCookie();
-        if (empty($settings)) {
-            self::saveSettingsToCookie(self::$defaultSettings);
+        $preferences = self::getPreferencesFromCookie();
+        if (empty($preferences)) {
+            self::savePreferencesToCookie(self::$defaultSettings);
         }
     }
 }
@@ -362,8 +392,8 @@ $router->get($base_url . '/settings', function (ServerRequest $request) use ($t,
 
 $router->get($base_url . '/settings/toggle/{settingName}', function (ServerRequest $request, $settingName) use ($t, $base_url) {
     $settingName = urldecode($settingName);
-    $currentValue = Settings::get($settingName);
-    Settings::set($settingName, !$currentValue);
+    $currentValue = Settings::getUserPreference($settingName);
+    Settings::setUserPreference($settingName, !$currentValue);
     return new RedirectResponse($base_url . '/settings');
 });
 
