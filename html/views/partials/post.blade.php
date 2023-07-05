@@ -18,23 +18,29 @@
     </div>
   @endif
   @if($video = Helpers::get_embeddable_video($data))
-    <div class="video">
-      <video id="video-{{ $data['name'] }}"></video>
+    <div class="video" style="background-image:url({{ $video['poster'] }}); background-size: cover;">
+      <video style="aspect-ratio: {{ $video['width'] }}/{{ $video['height'] }};" id="video-{{ $data['name'] }}" controls playsinline muted loop></video>
+      {{-- <video id="video-{{ $data['name'] }}"></video> --}}
       <script>
-        if(Hls.isSupported()) {
-          var video = document.getElementById('video-{{ $data['name'] }}');
-          video.style.aspectRatio = '{{ $video['width'] }}/{{ $video['height'] }}';
-          video.muted = true;
-          video.poster = '{{ $video['poster'] }}';
-          video.autoplay = true;
-          video.playsinline = true;
-          var hls = new Hls();
-          hls.loadSource('{{ $video['m3u8_src'] }}');
-          hls.attachMedia(video);
-          hls.on(Hls.Events.MANIFEST_PARSED,function() {
-            video.play();
-          });
-        }
+        (function(){
+          var url = "{{ $video['dash_src'] }}";
+          var player = dashjs.MediaPlayer().create();
+          player.initialize(document.querySelector("#video-{{ $data['name'] }}"), url, true);
+        })();
+        //if(Hls.isSupported()) {
+        //  var video = document.getElementById('video-{{ $data['name'] }}');
+        //  video.style.aspectRatio = '{{ $video['width'] }}/{{ $video['height'] }}';
+        //  video.muted = true;
+        //  video.poster = '{{ $video['poster'] }}';
+        //  video.autoplay = true;
+        //  video.playsinline = true;
+        //  var hls = new Hls();
+        //  hls.loadSource('{{ $video['m3u8_src'] }}');
+        //  hls.attachMedia(video);
+        //  hls.on(Hls.Events.MANIFEST_PARSED,function() {
+        //    video.play();
+        //  });
+        //}
       </script>
     </div>
   @endif

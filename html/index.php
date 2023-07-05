@@ -79,6 +79,7 @@ class Helpers
 
         if (isset($secure_media['reddit_video'])) {
             $m3u8_src = $secure_media['reddit_video']['hls_url'];
+            $dash_src = $secure_media['reddit_video']['dash_url'];
 
             // var_dump($m3u8_url);
 
@@ -94,6 +95,7 @@ class Helpers
             return [
                 // 'src' => $fallback_url,
                 'm3u8_src' => $m3u8_src,
+                'dash_src' => $dash_src,
                 'poster' => $poster,
                 'width' => $width,
                 'height' => $height,
