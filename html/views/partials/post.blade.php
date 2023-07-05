@@ -3,9 +3,9 @@
 @else
   @if($is_last)
     {{-- hx-get="{!! Helpers::get_next_page($data) !!}" hx-select=".list-t3" --}}
-    <a class="thing t3 tint-bg-down-2" href="{{ Helpers::get_base_url() }}{{ $data['permalink'] }}">
+    <a class="thing t3 tint-bg-down-2" href="{{ Helpers::get_base_url() }}{{ $data['permalink'] }}" hx-get="{!! Helpers::get_next_page($value['data']) !!}" hx-trigger="revealed" hx-select=".list-t3 .thing" hx-swap="afterend">
   @else
-    <a class="thing t3 tint-bg-down-2" href="{{ Helpers::get_base_url() }}{{ $data['permalink'] }}">
+    <a class="thing t3 tint-bg-down-2" href="{{ Helpers::get_base_url() }}{{ $data['permalink'] }}" >
   @endif
 @endif
   <div class="title tint-fg-up-65">{{ $data['title'] }}</div>

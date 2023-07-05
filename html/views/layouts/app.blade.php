@@ -34,7 +34,6 @@
             </div>
         @else
             <div class="container" hx-get="?fetch" hx-select=".container" hx-swap="outerHTML" hx-trigger="load">
-                {{-- @include('partials.progress-indicator', ['text' => 'Loading…']) --}}
                 @include('partials.ghost-cards')
             </div>
         @endif
