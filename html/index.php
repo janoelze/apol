@@ -254,8 +254,27 @@ class Subscriptions
     }
 }
 
+class UserSettings {
+    function __construct() {
+        $cookie_contents = $_COOKIE['user_settings'] ?? '[]';
+        $this->user_settings = json_decode($cookie_contents, true);
+    }
+    public function persist() {
+        $cookie_contents = json_encode($this->user_settings);
+        setcookie('user_settings', $cookie_contents, time() + (86400 * 30), "/");
+    }
+    public function get_user_settings() {
+        return $this->user_settings;
+    }
+    public function set_user_setting($name, $value) {
+        $this->user_settings[$name] = $value;
+        $this->persist();
+    }
+}
+
 $t = new Template();
 $r = new RedditProxy();
+$us = new UserSettings();
 $s = new Subscriptions();
 $base_url = Helpers::get_base_url();
 
@@ -308,7 +327,17 @@ $router->get($base_url . '/subscriptions', function (ServerRequest $request) use
     ]);
 });
 
-$router->get($base_url . '/settings', function (ServerRequest $request) use ($t, $r, $s, $is_content_fetch) {
+$router->get($base_url . '/settings', function (ServerRequest $request) use ($t, $r, $s, $us, $is_content_fetch) {
+    return $t->render('settings', [
+        'page_title' => 'Settings',
+        'async_load' => false
+    ]);
+});
+
+$router->put($base_url . '/settings', function (ServerRequest $request) use ($t, $r, $s, $us, $is_content_fetch) {
+    $data = $request->getParsedBody();
+    $us = $us->get_user_settings();
+    
     return $t->render('settings', [
         'page_title' => 'Settings',
         'async_load' => false

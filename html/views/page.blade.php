@@ -13,7 +13,9 @@
                         @endphp
                         @include('partials.post', ['data' => $value['data'], 'is_last' => $is_last, 'is_comments_page' => $is_comments_page])
                     @endforeach
-                    <div class="loading-indicator"><span class="tint-fg-up-16">Loading...</span></div>
+                    @if(!$is_comments_page)
+                        <div class="loading-indicator"><span class="tint-fg-up-16">Loading...</span></div>
+                    @endif
                 </div>
             @endif
             @if ($entry['kind'] == 'Listing' && count($entry['data']['children']) && $entry['data']['children'][0]['kind'] == 't1')

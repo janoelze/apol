@@ -40,4 +40,7 @@
         @endif
         @include('partials.tab-bar')
     </body>
+    <script type="text/javascript">
+        {!! Helpers::embed('apol.js') !!}
+    </script>
 </html>

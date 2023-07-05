@@ -59,7 +59,6 @@ a {
     flex-direction: column;
     padding: calc(var(--side-margin)*1.19) var(--side-margin);
     gap: 13px;
-    color: #EEEFF4;
 }
 
 .thing.t3:visited {

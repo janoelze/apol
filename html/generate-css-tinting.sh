@@ -1,12 +1,19 @@
 css_file="tinting.css"
 
+# purple
 #base_color_r="52"
 #base_color_g="6"
 #base_color_b="48"
 
+# grey
 base_color_r="33"
 base_color_g="39"
 base_color_b="50"
+
+# blue
+# base_color_r="75"
+# base_color_g="150"
+# base_color_b="247"
 
 generate_tinted_classes() {
   for i in {0..100}; do
