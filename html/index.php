@@ -194,7 +194,7 @@ class RedditProxy
         }
         $params = $request->getQueryParams();
         $params_encoded = http_build_query($params);
-        $url = sprintf('https://www.reddit.com%s.json?%s', $path, $params_encoded);
+        $url = sprintf('https://old.reddit.com%s.json?%s', $path, $params_encoded);
         return $this->request($url);
     }
 }
