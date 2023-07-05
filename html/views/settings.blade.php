@@ -21,7 +21,6 @@
                             </select>
                         @endif
                     @endforeach
-                    {{-- <input type="submit" value="Save"> --}}
                 </form>
                 <div id="result"></div>
             </div>

@@ -300,7 +300,6 @@ $t = new Template();
 $r = new RedditProxy();
 $us = new UserSettings();
 $s = new Subscriptions();
-$p = new Settings();
 $base_url = Helpers::get_base_url();
 
 // defaults
