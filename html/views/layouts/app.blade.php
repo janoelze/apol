@@ -27,7 +27,7 @@
             </script>
         @endif
     </head>
-    <body class="tint-bg-down-5">
+    <body class="tint-bg-down-5" id="body">
         @include('partials.title-bar', ['page_title' => $page_title])
         @if(isset($is_content_fetch) && $is_content_fetch || !$async_load)
             <div class="container tint-bg-down-0">
@@ -39,6 +39,29 @@
             </div>
         @endif
         @include('partials.tab-bar')
+        @if (Settings::getUserPreference("blur_nsfw"))
+        <style>
+            .is-nsfw .image {
+                overflow: hidden;
+                position: relative;
+            }
+            .is-nsfw .image:before {
+                content: "";
+                position: absolute;
+                z-index: 1;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+            }
+            .is-nsfw .image:hover img {
+                filter: none;
+            }
+            .is-nsfw .image img{
+                filter: blur(50px);
+            }
+        @endif
     </body>
     <script type="text/javascript">
         {!! Helpers::embed('apol.js') !!}

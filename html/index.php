@@ -10,6 +10,7 @@ use MiladRahimi\PhpRouter\Router;
 use Laminas\Diactoros\Response\JsonResponse;
 use MiladRahimi\PhpRouter\Routing\Route;
 use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\Response\RedirectResponse;
 
 foreach (glob(__DIR__ . '/blade-cache/*.php') as $filename) {
     unlink($filename);
@@ -102,25 +103,6 @@ class Helpers
         ];
     }
 
-    public static function get_settings() {
-        return [
-            [
-                'name' => 'Colorful Nests',
-                'type' => 'toggle',
-                'defaultValue' => false,
-            ]
-        ];
-    }
-
-    public static function set_setting($name, $value) {
-        $settings = self::get_settings();
-        foreach ($settings as $setting) {
-            if ($setting['name'] === $name) {
-                $setting['activation_func']($value);
-            }
-        }
-    }
-
     public static function extract_subreddit_id(){
         $url = $_SERVER['REQUEST_URI'];
         $url = explode('?', $url)[0];
@@ -169,6 +151,98 @@ class Helpers
             return sprintf('%sk', round($val / 1000, 1));
         } else {
             return $val;
+        }
+    }
+}
+
+class Settings
+{
+    public function __construct()
+    {
+        $this->initialize();
+    }
+
+    public static $defaultSettings = [
+        [
+            'label' => 'Colorful Nests',
+            'id' => 'colorful_nests',
+            'value' => true,
+            'type' => 'boolean',
+        ],
+        [
+            'label' => 'Blur NSFW',
+            'id' => 'blur_nsfw',
+            'value' => true,
+            'type' => 'boolean',
+        ],
+    ];
+
+    private static function getPreferencesFromCookie()
+    {
+        $cookieContents = $_COOKIE['preferences'] ?? '{}';
+        return json_decode($cookieContents, true);
+    }
+
+    private static function savePreferencesToCookie($preferences)
+    {
+        $cookieContents = json_encode($preferences);
+        setcookie('preferences', $cookieContents, time() + (86400 * 30), "/");
+    }
+
+    public static function getUserPreference($key)
+    {
+        $preferences = self::getPreferencesFromCookie();
+        foreach ($preferences as $preference) {
+            if ($preference['id'] == $key) {
+                return $preference['value'];
+            }
+        }
+        foreach (self::$defaultSettings as $defaultSetting) {
+            if ($defaultSetting['id'] == $key) {
+                return $defaultSetting['value'];
+            }
+        }
+        return null;
+    }
+
+    public static function setUserPreference($key, $value)
+    {
+        $key = urldecode($key);
+        $preferences = self::getPreferencesFromCookie();
+        foreach ($preferences as &$preference) {
+            if ($preference['id'] == $key) {
+                $preference['value'] = $value;
+            }
+        }
+        self::savePreferencesToCookie($preferences);
+        //override the session variable as well, so we always have up to date values
+        $_COOKIE['preferences'] = json_encode($preferences);
+    }
+
+    public static function getUserPreferences()
+    {
+        $userPreferences = self::getPreferencesFromCookie();
+        $defaultPreferences = array_column(self::$defaultSettings, null, 'id');
+        $userPreferences = array_column($userPreferences, null, 'id');
+
+        $mergedPreferences = $userPreferences + $defaultPreferences;
+
+        // If you want to preserve the original order of defaultSettings:
+        $mergedPreferences = array_merge($defaultPreferences, $mergedPreferences);
+
+        return array_values($mergedPreferences);
+    }
+
+    public static function revertToDefaultPreferences()
+    {
+        self::savePreferencesToCookie(self::$defaultSettings);
+    }
+
+    private function initialize()
+    {
+        $preferences = self::getPreferencesFromCookie();
+        if (empty($preferences)) {
+            self::savePreferencesToCookie(self::$defaultSettings);
         }
     }
 }
@@ -276,6 +350,7 @@ $t = new Template();
 $r = new RedditProxy();
 $us = new UserSettings();
 $s = new Subscriptions();
+$p = new Settings();
 $base_url = Helpers::get_base_url();
 
 // defaults
@@ -343,5 +418,18 @@ $router->put($base_url . '/settings', function (ServerRequest $request) use ($t,
         'async_load' => false
     ]);
 });
+
+$router->get($base_url . '/settings/toggle/{settingName}', function (ServerRequest $request, $settingName) use ($t, $base_url) {
+    $settingName = urldecode($settingName);
+    $currentValue = Settings::getUserPreference($settingName);
+    Settings::setUserPreference($settingName, !$currentValue);
+    return new RedirectResponse($base_url . '/settings');
+});
+
+$router->get($base_url . '/settings/revert', function (ServerRequest $request) use ($t, $base_url) {
+    Settings::revertToDefaultSettings();
+    return new RedirectResponse($base_url . '/settings');
+});
+
 
 $router->dispatch();
