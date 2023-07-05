@@ -3,6 +3,14 @@
         <title>Apol - @yield('title')</title>
         <meta name="viewport" content="width=device-width, viewport-fit=cover,initial-scale=1.0,user-scalable=no" />
         <script src="https://unpkg.com/htmx.org@1.9.2/dist/htmx.min.js"></script>
+        <link rel="manifest" href="manifest.json">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="application-name" content="Apol">
+        <meta name="apple-mobile-web-app-title" content="Apol">
+        <meta name="theme-color" content="#121823">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <style>
             {!! Helpers::embed('apol.css') !!}
             {!! Helpers::embed('tinting.css') !!}
