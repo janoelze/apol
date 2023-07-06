@@ -73,32 +73,38 @@ class Helpers
         $updated_url = $url_parts['path'] . '?' . $query;
         return $updated_url;
     }
-    public static function get_embeddable_video($data){
+    public static function get_embeddable_video($data)
+    {
         // get fallback_url
         $secure_media = $data['secure_media'] ?? [];
 
         if (isset($secure_media['reddit_video'])) {
-            $m3u8_src = $secure_media['reddit_video']['hls_url'];
-            $dash_src = $secure_media['reddit_video']['dash_url'];
-
-            // var_dump($m3u8_url);
-
-            // $fallback_url = $secure_media['reddit_video']['fallback_url'];
             $width = $secure_media['reddit_video']['width'];
             $height = $secure_media['reddit_video']['height'];
-            $poster = $data['thumbnail'];
 
-            // $fallback_url = str_replace('DASH_1080', 'DASH_720',
-            // $fallback_url);
-            // $fallback_url = str_replace('DASH_720', 'DASH_360', $fallback_url);
+            $mp4_url = $secure_media['reddit_video']['fallback_url'];
+
+            foreach(['360', '1080'] as $w){
+                $mp4_url = str_replace(
+                    sprintf('DASH_%s.mp4', $w),
+                    sprintf('DASH_720.mp4', $w),
+                    $mp4_url
+                );
+            }
+
+            $mp4_audio_url = str_replace(
+                'DASH_720.mp4',
+                'DASH_audio.mp4',
+                $mp4_url
+            );
 
             return [
-                // 'src' => $fallback_url,
-                'm3u8_src' => $m3u8_src,
-                'dash_src' => $dash_src,
-                'poster' => $poster,
+                'mp4_video_url' => $mp4_url,
+                'mp4_audio_url' => $mp4_audio_url,
+                'has_audio' => isset($secure_media['reddit_video']['has_audio']) ? $secure_media['reddit_video']['has_audio'] : false,
                 'width' => $width,
                 'height' => $height,
+                'poster' => $data['thumbnail'],
             ];
         }
     }

@@ -102,23 +102,25 @@ a {
     /* width: 100%; */
     border-radius: var(--border-radius);
     /* height: 100%; */
-    /* position: relative; */
+    position: relative;
+    background-position: center center;
+    background-size: cover;
     overflow: hidden;
 }
 
 .thing.t3 .video video {
     width: 100%;
-    max-width: 100%;
+    /* max-width: 100%; */
     /* width: 100%; */
-    border-radius: var(--border-radius);
-    /* height: 100%; */
+    /* border-radius: var(--border-radius); */
+    height: 100%;
     /* object-fit: cover; */
-    /* position: absolute; */
+    position: absolute;
     /* top: 0; */
     /* left: 0; */
     /* right: 0; */
     /* bottom: 0; */
-    background-color: rgba(255, 255, 255, 0.07);
+    /* background-color: rgba(255, 255, 255, 0.07); */
 }
 
 .thing.t3 .image img {

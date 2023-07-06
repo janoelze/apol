@@ -1,15 +1,21 @@
-function initFormAutoSave(){
-  let forms = document.querySelectorAll("form.autosave");
+function runVideos() {
+	document.querySelectorAll("video").forEach(function (video) {
+		video.play();
+	});
+}
 
-  forms.forEach(function(form){
-    console.log("form", form);
-    form.addEventListener("change", function(event){
-      console.log("change");
-      htmx.ajax(form);
-    });
-  });
+function initFormAutoSave() {
+	let forms = document.querySelectorAll("form.autosave");
 
-  // var form = document.getElementById("myForm");
+	forms.forEach(function (form) {
+		console.log("form", form);
+		form.addEventListener("change", function (event) {
+			console.log("change");
+			htmx.ajax(form);
+		});
+	});
+
+	// var form = document.getElementById("myForm");
 	// var initialFormData = new FormData(form);
 
 	// function hasFormChanged() {
@@ -32,13 +38,15 @@ function initFormAutoSave(){
 	// 	}
 	// }
 
-	// setInterval(autosaveForm, 5000); 
+	// setInterval(autosaveForm, 5000);
 }
 
-function onLoad(){
-  console.log("onLoad");
-  // initFormAutoSave();
+function onLoad() {
+	// console.log("onLoad");
+	// initFormAutoSave();
+	runVideos();
 }
 
-window.addEventListener('load', onLoad);
+window.addEventListener("DOMContentLoaded", onLoad);
+window.addEventListener("load", onLoad);
 window.addEventListener("htmx:afterSwap", onLoad);

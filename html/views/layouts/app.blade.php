@@ -4,6 +4,7 @@
         <meta name="viewport" content="width=device-width, viewport-fit=cover,initial-scale=1.0,user-scalable=no" />
         <script src="//unpkg.com/htmx.org@1.9.2/dist/htmx.min.js"></script>
         <script src="//cdn.dashjs.org/v3.1.0/dash.all.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
         <link rel="manifest" href="{{ Helpers::get_base_url() }}/manifest.json">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
@@ -35,6 +36,9 @@
                 });
             </script>
         @endif
+        <script type="text/javascript">
+            {!! Helpers::embed('apol.js') !!}
+        </script>
     </head>
     <body class="tint-bg-down-5" id="body">
         @include('partials.title-bar', ['page_title' => $page_title])
@@ -49,7 +53,4 @@
         @endif
         @include('partials.tab-bar')
     </body>
-    <script type="text/javascript">
-        {!! Helpers::embed('apol.js') !!}
-    </script>
 </html>
