@@ -13,21 +13,31 @@
     <meta name="apple-mobile-web-app-title" content="Apol">
     <meta name="theme-color" content="#121823">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <style>
         {!! Helpers::embed('apol.css') !!} {!! Helpers::embed('tinting.css') !!}
     </style>
     <script>
-        //vanilla js document ready
-        document.addEventListener("DOMContentLoaded", function(event) {
-            //pull to refresh
-            const ptr = PullToRefresh.init({
+        function initPullToRefresh() {
+            PullToRefresh.destroyAll();
+            let ptr = PullToRefresh.init({
                 mainElement: 'body',
+                triggerElement: '#content-container',
                 onRefresh() {
                     window.location.reload();
                 }
             });
-        });
+            // Initialize pulltorefresh.js when DOM content is loaded
+            document.addEventListener('DOMContentLoaded', initPullToRefresh);
+
+            // Re-initialize pulltorefresh.js after HTMX swaps an element
+            document.body.addEventListener('htmx:afterSwap', function(event) {
+                // Check if the swapped element is the one you're interested in
+                if (event.target.matches('your-selector')) {
+                    initPullToRefresh();
+                }
+            });
+        }
     </script>
     <style>
         .ptr--icon,
@@ -62,12 +72,12 @@
 <body class="tint-bg-down-5" id="body">
     @include('partials.title-bar', ['page_title' => $page_title])
     @if ((isset($is_content_fetch) && $is_content_fetch) || !$async_load)
-        <div class="container tint-bg-down-0">
+        <div class="container tint-bg-down-0" id="content-container">
             @yield('content')
         </div>
     @else
-        <div class="container tint-bg-down-0" hx-get="?fetch" hx-select=".container" hx-swap="outerHTML"
-            hx-trigger="load">
+        <div class="container tint-bg-down-0"id="content-container" hx-get="?fetch" hx-select=".container"
+            hx-swap="outerHTML" hx-trigger="load">
             @include('partials.ghost-cards')
         </div>
     @endif
