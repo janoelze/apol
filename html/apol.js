@@ -167,9 +167,10 @@ function getVisibleVideos(){
 }
 
 function activateVideo(video){
-	let innerHTML = video.innerHTML.replace('disabledsource', 'source');
-	video.innerHTML = innerHTML;
-	if(video.paused){
+	let hasSource = !video.innerHTML.includes("disabledsource");
+	if(!hasSource){
+		let innerHTML = video.innerHTML.replace('disabledsource', 'source');
+		video.innerHTML = innerHTML;
 		video.play();
 	}
 }
