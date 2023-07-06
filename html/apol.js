@@ -144,11 +144,51 @@ function initScrolltoTop() {
         });
     });
 }
+
 let commentsInstance = null;
+
+function getVisibleVideos(){
+	let videos = document.querySelectorAll('video');
+	let visibleVideos = [];
+	let invisibleVideos = [];
+	videos.forEach(video => {
+		let rect = video.getBoundingClientRect();
+		let visiblePercent = (rect.top + rect.height) / rect.height;
+		if(visiblePercent > 0.6){
+			visibleVideos.push(video);
+		}else{
+			invisibleVideos.push(video);
+		}
+	});
+	return {
+		visibleVideos,
+		invisibleVideos
+	};
+}
+
+function activateVideo(video){
+	let innerHTML = video.innerHTML.replace('disabledsource', 'source');
+	video.innerHTML = innerHTML;
+	if(video.paused){
+		video.play();
+	}
+}
+
+function deactivateVideo(video){
+	video.pause();
+}
+
+function visibleVideoDetection(){
+	let {visibleVideos, invisibleVideos} = getVisibleVideos();
+	visibleVideos.forEach(activateVideo);
+	invisibleVideos.forEach(deactivateVideo);
+	window.setTimeout(visibleVideoDetection, 500);
+}
 
 function onLoad() {
     console.log("hello :^)");
     overScrollDetection();
+		visibleVideoDetection();
     if (!commentsInstance) {
         commentsInstance = new CommentsClass();
     }
