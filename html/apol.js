@@ -49,7 +49,7 @@ function initPullToRefresh() {
 
 function onLoad() {
     console.log("onLoad");
-    initPullToRefresh();
+    // initPullToRefresh();
     // initFormAutoSave();
 }
 

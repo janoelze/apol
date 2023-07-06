@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, viewport-fit=cover,initial-scale=1.0,user-scalable=no" />
     <script src="//unpkg.com/htmx.org@1.9.2/dist/htmx.min.js"></script>
     <script src="//cdn.dashjs.org/v3.1.0/dash.all.min.js"></script>
-    <script src="https://unpkg.com/pulltorefreshjs@0.1.22/dist/index.umd.js"></script>
+    {{-- <script src="https://unpkg.com/pulltorefreshjs@0.1.22/dist/index.umd.js"></script> --}}
     <link rel="manifest" href="{{ Helpers::get_base_url() }}/manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">

@@ -7,6 +7,8 @@
 
 html {
     min-height: calc(100% + env(safe-area-inset-top));
+    overflow: hidden;
+    overscroll-behavior: none;
 }
 
 * {
@@ -19,7 +21,6 @@ body {
     font-family: -apple-system, sans-serif;
     font-size: 16px;
     color: #EEEFF4;
-    overflow-x: hidden;
     display: flex;
     flex-direction: column;
 }
@@ -32,6 +33,7 @@ a {
     height: calc(100vh - var(--tab-bar-height) - var(--title-bar-height));
     overflow-x: scroll;
     overflow-y: hidde;
+    overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
 }
 
