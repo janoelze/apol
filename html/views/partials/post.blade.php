@@ -3,7 +3,7 @@
 @else
   @if($is_last)
     {{-- hx-get="{!! Helpers::get_next_page($data) !!}" hx-select=".list-t3" --}}
-    <section class="thing t3 tint-bg-down-2 {{ $data['over_18'] ? 'is-nsfw' : '' }}" hx-on="click: window.location.href='{{ Helpers::get_base_url() }}{{ $data['permalink'] }}'" hx-get="{!! Helpers::get_next_page($value['data']) !!}" hx-trigger="revealed" hx-select=".list-t3 .thing" hx-swap="afterend" hx-indicator=".loading-indicator">
+    <section class="thing t3 tint-bg-down-2 {{ $data['over_18'] ? 'is-nsfw' : '' }}" hx-on="click: window.location.href='{{ Helpers::get_base_url() }}{{ $data['permalink'] }}'" hx-get="{!! Helpers::get_next_page($value['data']) !!}" hx-trigger="intersect once" hx-select=".list-t3 .thing" hx-swap="afterend" hx-indicator=".loading-indicator">
   @else
     <section class="thing t3 tint-bg-down-2 {{ $data['over_18'] ? 'is-nsfw' : '' }}" hx-on="click: window.location.href='{{ Helpers::get_base_url() }}{{ $data['permalink'] }}'" >
   @endif
