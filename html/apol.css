@@ -37,6 +37,7 @@ a {
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: contain;
+    scroll-behavior: smooth;
 }
 
 .meta {
@@ -378,4 +379,9 @@ a {
     width: 50px;
     height: 50px;
     z-index: 2000;
+}
+
+.thing.t1.collapsed>.comment-body .body,
+.thing.t1.collapsed>.replies {
+    display: none;
 }
