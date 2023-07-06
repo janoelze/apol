@@ -17,28 +17,6 @@
     <style>
         {!! Helpers::embed('apol.css') !!} {!! Helpers::embed('tinting.css') !!}
     </style>
-    <script>
-        function initPullToRefresh() {
-            PullToRefresh.destroyAll();
-            let ptr = PullToRefresh.init({
-                mainElement: 'body',
-                triggerElement: '#content-container',
-                onRefresh() {
-                    window.location.reload();
-                }
-            });
-            // Initialize pulltorefresh.js when DOM content is loaded
-            document.addEventListener('DOMContentLoaded', initPullToRefresh);
-
-            // Re-initialize pulltorefresh.js after HTMX swaps an element
-            document.body.addEventListener('htmx:afterSwap', function(event) {
-                // Check if the swapped element is the one you're interested in
-                if (event.target.matches('your-selector')) {
-                    initPullToRefresh();
-                }
-            });
-        }
-    </script>
     <style>
         .ptr--icon,
         .ptr--text {
@@ -76,7 +54,7 @@
             @yield('content')
         </div>
     @else
-        <div class="container tint-bg-down-0"id="content-container" hx-get="?fetch" hx-select=".container"
+        <div class="container tint-bg-down-0" id="content-container" hx-get="?fetch" hx-select=".container"
             hx-swap="outerHTML" hx-trigger="load">
             @include('partials.ghost-cards')
         </div>
