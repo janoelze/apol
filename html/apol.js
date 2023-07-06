@@ -154,6 +154,13 @@ function onLoad() {
     }
 }
 
+function afterSwap() {
+    console.log("htmx:afterSwap event fired");
+
+    // Always create a new instance when the htmx:afterSwap event is fired
+    commentsInstance = new CommentsClass();
+}
+
 window.addEventListener("DOMContentLoaded", onLoad);
 window.addEventListener("load", onLoad);
-window.addEventListener("htmx:afterSwap", onLoad);
+window.addEventListener("htmx:afterSwap", afterSwap);
