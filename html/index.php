@@ -238,14 +238,12 @@ class RedditProxy
         });
         return $data;
     }
-    public function get($request)
+    public function get($path, $query_params = [])
     {
-        $path = $request->getUri()->getPath();
         if (strpos($path, '/apol') === 0) {
             $path = substr($path, 5);
         }
-        $params = $request->getQueryParams();
-        $params_encoded = http_build_query($params);
+        $params_encoded = http_build_query($query_params);
         $url = sprintf('https://old.reddit.com%s.json?%s', $path, $params_encoded);
         return $this->request($url);
     }
@@ -369,14 +367,17 @@ $is_content_fetch = isset($_GET['fetch']);
 $router->get($base_url . '.*', function (ServerRequest $request) use ($t, $r, $is_content_fetch) {
     $data = [];
 
+    $path = $request->getUri()->getPath();
+    $query_params = $request->getQueryParams();
+
     if ($is_content_fetch) {
-        $data = $r->get($request);
+        $data = $r->get($path, $query_params);
         if (isset($data['error'])) {
             return new JsonResponse($data);
         }
     }
 
-    $path = $request->getUri()->getPath() ?? '/r/all';
+    $path = $path ?? '/r/all';
     $is_comments_page = strpos($path, '/comments/') !== false;
     $subreddit_id = Helpers::extract_subreddit_id();
 
@@ -391,6 +392,39 @@ $router->get($base_url . '.*', function (ServerRequest $request) use ($t, $r, $i
         'is_content_fetch' => $is_content_fetch,
         'subreddit_id' => $subreddit_id,
         'is_comments_page' => $is_comments_page,
+    ]);
+});
+
+$router->get($base_url . '/r/feed', function (ServerRequest $request) use ($t, $r, $s, $is_content_fetch) {
+    $arr = $s->get_subsriptions();
+
+    if (empty($arr)) {
+        $arr = json_decode(file_get_contents('./default-subreddits.json'), true);
+    }
+
+    $multireddit_string = implode('+', $arr);
+
+    $url_path = sprintf('/r/%s/.json', $multireddit_string);
+    $url_params = $request->getQueryParams();
+
+    var_dump($url_path);
+
+    $data = [];
+
+    if ($is_content_fetch) {
+        $data = $r->get($url_path, $url_params);
+        if (isset($data['error'])) {
+            return new JsonResponse($data);
+        }
+    }
+
+    return $t->render('page', [
+        'data' => $data,
+        'async_load' => true,
+        'page_title' => 'Home',
+        'is_content_fetch' => $is_content_fetch,
+        'subreddit_id' => 'home',
+        'is_comments_page' => false,
     ]);
 });
 

@@ -55,15 +55,14 @@
             @yield('content')
         </div>
     @else
-        <div class="container tint-bg-down-0" id="content-container" hx-get="?fetch" hx-select=".container" hx-swap="outerHTML" hx-trigger="load">
+        <div class="container tint-bg-down-0" id="content-container" hx-get="?fetch" hx-select="#content-container .listing" hx-swap="innerHTML" hx-trigger="load">
             @include('partials.ghost-cards')
         </div>
     @endif
     @include('partials.tab-bar')
     @include('partials.scroll-to-top')
+    <script type="text/javascript">
+        {!! Helpers::embed('apol.js') !!}
+    </script>
 </body>
-<script type="text/javascript">
-    {!! Helpers::embed('apol.js') !!}
-</script>
-
 </html>
