@@ -78,6 +78,8 @@ class Helpers
         // get fallback_url
         $secure_media = $data['secure_media'] ?? [];
 
+        // var_dump($data);
+
         if (isset($secure_media['reddit_video'])) {
             $width = $secure_media['reddit_video']['width'];
             $height = $secure_media['reddit_video']['height'];

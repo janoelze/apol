@@ -368,3 +368,12 @@ a {
     opacity: 1;
     transition: opacity 2s;
 }
+
+.pull-to-refresh-indicator .ptr--icon {
+    position: absolute;
+    top: 120px;
+    left: 120px;
+    width: 50px;
+    height: 50px;
+    z-index: 2000;
+}

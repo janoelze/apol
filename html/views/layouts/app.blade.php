@@ -47,6 +47,11 @@
     @include('partials.title-bar', ['page_title' => $page_title])
     @if ((isset($is_content_fetch) && $is_content_fetch) || !$async_load)
         <div class="container tint-bg-down-0" id="content-container">
+            <div class="pull-to-refresh-indicator">
+                <svg class="ptr--icon" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1" fill="none"></circle>
+                </svg>
+            </div>
             @yield('content')
         </div>
     @else
