@@ -377,7 +377,7 @@ a {
     top: 0px;
     right: 0px;
     height: env(safe-area-inset-top);
-    background: transparent;
+    background: red;
     width: 50%;
     z-index: 1000;
     border: none;
