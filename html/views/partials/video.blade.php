@@ -7,7 +7,6 @@
     data-has-audio="{{ $video['has_audio'] ? '1' : '0' }}"
     data-height="{{ $video['height'] }}"
     data-hls-url="{{ $video['hls_url'] }}"
-    data-dash-url="{{ $video['dash_url'] }}"
-    muted loop controls playsinline autoplay>
+    data-dash-url="{{ $video['dash_url'] }}">
   </video>
 </div>

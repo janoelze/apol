@@ -210,6 +210,9 @@ class VideoMgr {
 	}
 	initiateVideo(video) {
 		let videoId = video.getAttribute("id");
+		let isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+		// isiOS = false;
 
 		console.log("initiating", videoId);
 
@@ -229,25 +232,46 @@ class VideoMgr {
 
 		this.playerRefs[videoId] = new Plyr(video, {
 			controls: controls,
-			autoplay: true,
-			muted: true,
 			playsinline: true,
+			muted: true,
+			autoplay: true,
 		});
 
-		this.playerRefs[videoId].source = {
-			type: "video",
-			title: videoId,
-			poster: posterUrl,
-			sources: [
-				{
-					src: hlsUrl,
-					type: "application/x-mpegURL",
-				},
-			],
-		};
+		console.log("videoId", this.playerRefs[videoId].elements);
+
+		console.log("isiOS", isiOS);
+
+		if (isiOS) {
+			this.playerRefs[videoId].source = {
+				type: "video",
+				title: videoId,
+				poster: posterUrl,
+				sources: [
+					{
+						src: hlsUrl,
+						type: "application/x-mpegURL",
+					},
+				],
+			};
+		}else{
+			this.playerRefs[videoId].source = {
+				type: "video",
+				title: videoId,
+				poster: posterUrl,
+				sources: [
+					{
+						src: mp4Url,
+						type: "video/mp4",
+					},
+				],
+			};
+		}
 
 		let containerEl = this.playerRefs[videoId].elements.container;
 		containerEl.style.aspectRatio = `${videoWidth}/${videoHeight}`;
+
+		let videoEl = containerEl.querySelector("video");
+		videoEl.muted = true;
 	}
 	activateVideo(video) {
 		let userHasInteracted = this.hasUserInteracted();
