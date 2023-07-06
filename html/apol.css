@@ -111,32 +111,6 @@ a {
     margin-right: auto;
 }
 
-.thing.t3 .video {
-    /* width: 100%; */
-    border-radius: var(--border-radius);
-    /* height: 100%; */
-    position: relative;
-    background-position: center center;
-    background-size: cover;
-    overflow: hidden;
-}
-
-.thing.t3 .video video {
-    width: 100%;
-    /* display: none; */
-    /* max-width: 100%; */
-    /* width: 100%; */
-    /* border-radius: var(--border-radius); */
-    height: 100%;
-    /* object-fit: cover; */
-    position: absolute;
-    /* top: 0; */
-    /* left: 0; */
-    /* right: 0; */
-    /* bottom: 0; */
-    /* background-color: rgba(255, 255, 255, 0.07); */
-}
-
 .thing.t3 .image img {
     width: 100%;
     max-width: 100%;
@@ -383,4 +357,11 @@ a {
 .thing.t1.collapsed>.comment-body .body,
 .thing.t1.collapsed>.replies {
     display: none;
+}
+
+
+/* .plyr--video */
+
+.thing.t3 .plyr--video {
+    border-radius: var(--border-radius);
 }

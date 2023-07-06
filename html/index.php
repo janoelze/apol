@@ -75,40 +75,8 @@ class Helpers
     }
     public static function get_embeddable_video($data)
     {
-        // get fallback_url
         $secure_media = $data['secure_media'] ?? [];
-
-        // var_dump($data);
-
-        if (isset($secure_media['reddit_video'])) {
-            $width = $secure_media['reddit_video']['width'];
-            $height = $secure_media['reddit_video']['height'];
-
-            $mp4_url = $secure_media['reddit_video']['fallback_url'];
-
-            foreach(['360', '1080'] as $w){
-                $mp4_url = str_replace(
-                    sprintf('DASH_%s.mp4', $w),
-                    sprintf('DASH_720.mp4', $w),
-                    $mp4_url
-                );
-            }
-
-            $mp4_audio_url = str_replace(
-                'DASH_720.mp4',
-                'DASH_audio.mp4',
-                $mp4_url
-            );
-
-            return [
-                'mp4_video_url' => $mp4_url,
-                'mp4_audio_url' => $mp4_audio_url,
-                'has_audio' => isset($secure_media['reddit_video']['has_audio']) ? $secure_media['reddit_video']['has_audio'] : false,
-                'width' => $width,
-                'height' => $height,
-                'poster' => $data['thumbnail'],
-            ];
-        }
+        return isset($secure_media['reddit_video']) ? $secure_media['reddit_video'] : false;
     }
     public static function get_embeddable_picture($data)
     {

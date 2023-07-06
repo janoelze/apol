@@ -18,14 +18,10 @@
     </div>
   @endif
   @if($video = Helpers::get_embeddable_video($data))
-    <div class="video" style="background-image:url({{ $video['poster'] }}); aspect-ratio: {{ $video['width'] }}/{{ $video['height'] }};">
-      <video id="video-{{ $data['name'] }}" muted controls playsinline>
-        <disabledsource src="{{$video['mp4_video_url']}}" playsinline>
-        @if($video['has_audio'])
-          <disabledsource src="{{$video['mp4_audio_url']}}" playsinline>
-        @endif
-      </video>
-    </div>
+    @include('partials.video', [
+      'video' => $video,
+      'data' => $data
+    ])
   @endif
   @if($data['url'] ?? false)
     <a href="{{$data['url']}}" class="url tint-bg-up-2">

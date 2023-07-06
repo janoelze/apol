@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, viewport-fit=cover,initial-scale=1.0,user-scalable=no" />
     <script src="//unpkg.com/htmx.org@1.9.2/dist/htmx.min.js"></script>
     <link rel="manifest" href="{{ Helpers::get_base_url() }}/manifest.json">
+    <script src="//cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+    <script src="//cdn.jsdelivr.net/hls.js/latest/hls.js"></script>
+    {{-- <script src="//cdn.dashjs.org/latest/dash.all.debug.js"></script> --}}
+    <link rel="stylesheet" href="//cdn.plyr.io/3.7.8/plyr.css" />
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Apol">
@@ -14,12 +18,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <style>
         {!! Helpers::embed('apol.css') !!} {!! Helpers::embed('tinting.css') !!}
-    </style>
-    <style>
-        .ptr--icon,
-        .ptr--text {
-            color: #fff !important;
-        }
     </style>
     @if (Helpers::is_production())
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-GLLFFQ7PRP"></script>
@@ -47,11 +45,6 @@
     @include('partials.title-bar', ['page_title' => $page_title])
     @if ((isset($is_content_fetch) && $is_content_fetch) || !$async_load)
         <div class="container tint-bg-down-0" id="content-container">
-            <div class="pull-to-refresh-indicator">
-                <svg class="ptr--icon" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1" fill="none"></circle>
-                </svg>
-            </div>
             @yield('content')
         </div>
     @else
