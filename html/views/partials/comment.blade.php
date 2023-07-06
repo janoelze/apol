@@ -7,8 +7,8 @@
     <div class="comment-body tint-bg-down-3 tint-fg-up-51">
       <div class="meta">
         <div class="text tint-fg-up-65">{{ $data['author'] }}</div>
-        <div class="tint-fg-up-35">{!! Helpers::embed('./img/arrow-up.svg') !!} {{ Helpers::formatk($data['ups']) }}</div>
-        <div class="tint-fg-up-35 push-right">{{ Helpers::relative_time($data['created_utc']) }}</div>
+        <div class="tint-fg-up-15">{!! Helpers::embed('./img/arrow-up.svg') !!} {{ Helpers::formatk($data['ups']) }}</div>
+        <div class="tint-fg-up-15 push-right">{{ Helpers::relative_time($data['created_utc']) }}</div>
       </div>
       <div class="body">{!! htmlspecialchars_decode($data['body_html']) !!}</div>
     </div>

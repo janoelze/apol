@@ -11,6 +11,16 @@ use Laminas\Diactoros\Response\JsonResponse;
 use MiladRahimi\PhpRouter\Routing\Route;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Response\RedirectResponse;
+use Cake\Cache\Cache;
+
+// config
+
+Cache::setConfig('default', [
+    'className' => 'File',
+    'duration' => '+2 minutes',
+    'path' => './cache',
+    'prefix' => 'apol_'
+]);
 
 foreach (glob(__DIR__ . '/blade-cache/*.php') as $filename) {
     unlink($filename);
@@ -63,6 +73,35 @@ class Helpers
         $updated_url = $url_parts['path'] . '?' . $query;
         return $updated_url;
     }
+    public static function get_embeddable_video($data){
+        // get fallback_url
+        $secure_media = $data['secure_media'] ?? [];
+
+        if (isset($secure_media['reddit_video'])) {
+            $m3u8_src = $secure_media['reddit_video']['hls_url'];
+            $dash_src = $secure_media['reddit_video']['dash_url'];
+
+            // var_dump($m3u8_url);
+
+            // $fallback_url = $secure_media['reddit_video']['fallback_url'];
+            $width = $secure_media['reddit_video']['width'];
+            $height = $secure_media['reddit_video']['height'];
+            $poster = $data['thumbnail'];
+
+            // $fallback_url = str_replace('DASH_1080', 'DASH_720',
+            // $fallback_url);
+            // $fallback_url = str_replace('DASH_720', 'DASH_360', $fallback_url);
+
+            return [
+                // 'src' => $fallback_url,
+                'm3u8_src' => $m3u8_src,
+                'dash_src' => $dash_src,
+                'poster' => $poster,
+                'width' => $width,
+                'height' => $height,
+            ];
+        }
+    }
     public static function get_embeddable_picture($data)
     {
         $url = $data['url'];
@@ -103,7 +142,8 @@ class Helpers
         ];
     }
 
-    public static function extract_subreddit_id(){
+    public static function extract_subreddit_id()
+    {
         $url = $_SERVER['REQUEST_URI'];
         $url = explode('?', $url)[0];
         $matches = [];
@@ -171,19 +211,23 @@ class RedditProxy
     }
     public function request($url)
     {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (iPhone; CPU iPhone OS 16_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $output = curl_exec($ch);
-        curl_close($ch);
-        $data = @json_decode($output, true);
-        if (!$data) {
-            $data = [
-                'error' => 'Could not parse JSON',
-                'raw' => $output,
-            ];
-        }
+        $cache_key = md5($url);
+        $data = Cache::remember($cache_key, function () use ($url) {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (iPhone; CPU iPhone OS 16_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            $output = curl_exec($ch);
+            curl_close($ch);
+            $data = @json_decode($output, true);
+            if (!$data) {
+                $data = [
+                    'error' => 'Could not parse JSON',
+                    'raw' => $output,
+                ];
+            }
+            return $data;
+        });
         return $data;
     }
     public function get($request)
@@ -236,8 +280,10 @@ class Subscriptions
     }
 }
 
-class UserSettings {
-    function __construct() {
+class UserSettings
+{
+    function __construct()
+    {
         $cookie_contents = $_COOKIE['user_settings'] ?? '[]';
         $this->user_settings = json_decode($cookie_contents, true);
         $this->default_settings = [
@@ -275,14 +321,16 @@ class UserSettings {
     {
         return $this->default_settings;
     }
-    public function persist() {
+    public function persist()
+    {
         $cookie_contents = json_encode($this->user_settings);
         setcookie('user_settings', $cookie_contents, time() + (86400 * 30), "/");
     }
-    public function get_user_settings() {
+    public function get_user_settings()
+    {
         $user_settings = [];
 
-        foreach($this->get_default_settings() as $setting) {
+        foreach ($this->get_default_settings() as $setting) {
             $new_setting = $setting;
             $new_setting['value'] = $this->user_settings[$setting['id']] ?? $setting['value'];
             $user_settings[] = $new_setting;
@@ -290,7 +338,8 @@ class UserSettings {
 
         return $user_settings;
     }
-    public function set_user_setting($name, $value) {
+    public function set_user_setting($name, $value)
+    {
         $this->user_settings[$name] = $value;
         $this->persist();
     }
@@ -312,7 +361,7 @@ $is_content_fetch = isset($_GET['fetch']);
 $router->get($base_url . '.*', function (ServerRequest $request) use ($t, $r, $is_content_fetch) {
     $data = [];
 
-    if($is_content_fetch) {
+    if ($is_content_fetch) {
         $data = $r->get($request);
         if (isset($data['error'])) {
             return new JsonResponse($data);

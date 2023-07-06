@@ -1,5 +1,5 @@
 build
 html/vendor
 .DS_Store
+cache
 blade-cache
-html/blade-cache
