@@ -60,6 +60,7 @@
         </div>
     @endif
     @include('partials.tab-bar')
+    @include('partials.scroll-to-top')
 </body>
 <script type="text/javascript">
     {!! Helpers::embed('apol.js') !!}
