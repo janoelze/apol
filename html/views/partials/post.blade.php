@@ -40,8 +40,6 @@
     <div class="tint-fg-up-35">{!! Helpers::embed('./img/clock.svg') !!} {{ Helpers::relative_time($data['created_utc']) }}</div>
     @if($data['subreddit'] != $subreddit_id)
       <div class="tint-fg-up-35 subreddit push-right">
-        <span class="">In</span>
-        <span class="text-semibold"></span>
         <a href="{{ Helpers::get_base_url() }}/r/{{ $data['subreddit'] }}" class="tint-fg-up-35">r/{{ $data['subreddit'] }}</a>
       </div>
     @endif
