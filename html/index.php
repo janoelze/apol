@@ -248,17 +248,25 @@ class Subscriptions
         $cookie_contents = json_encode($this->subscriptions);
         setcookie('subsriptions', $cookie_contents, time() + (86400 * 30), "/");
     }
+    public function get_default_subreddits()
+    {
+        $file_contents = file_get_contents('./default-subreddits.json');
+        return json_decode($file_contents, true);
+    }
     public function get_subsriptions()
     {
-        $arr = $this->subscriptions;
-        if (empty($arr)) {
-            $arr = json_decode(file_get_contents('./default-subreddits.json'), true);
-        }
-        return $arr;
+        return $this->subscriptions;
     }
     public function add_subscription($subreddit)
     {
         $this->subscriptions[] = $subreddit;
+        $this->persist();
+    }
+    public function remove_subscription($subreddit)
+    {
+        $this->subscriptions = array_filter($this->subscriptions, function ($item) use ($subreddit) {
+            return $item != $subreddit;
+        });
         $this->persist();
     }
 }
@@ -388,7 +396,7 @@ $router->get($base_url . '.*', function (ServerRequest $request) use ($t, $s, $r
 
     $is_comments_page = strpos($page_path, '/comments/') !== false;
 
-    if($is_comments_page){
+    if ($is_comments_page) {
         $page_title = 'Comments';
     }
 
@@ -407,14 +415,36 @@ $router->get($base_url . '.*', function (ServerRequest $request) use ($t, $s, $r
 });
 
 $router->get($base_url . '/subscriptions', function (ServerRequest $request) use ($t, $r, $s, $is_content_fetch) {
-    $arr = $s->get_subsriptions();
+    return $t->render('subscriptions', [
+        'subscriptions' => $s->get_subsriptions(),
+        'default_subreddits' => $s->get_default_subreddits(),
+        'page_title' => 'Subscriptions',
+        'async_load' => false
+    ]);
+});
 
-    if (empty($arr)) {
-        $arr = json_decode(file_get_contents('./default-subreddits.json'), true);
+$router->post($base_url . '/subscriptions', function (ServerRequest $request) use ($t, $r, $s, $is_content_fetch) {
+    $post_data = $request->getParsedBody();
+
+    if (isset($post_data['subreddit']) && !empty($post_data['subreddit'])) {
+        $s->add_subscription($post_data['subreddit']);
     }
 
     return $t->render('subscriptions', [
-        'arr' => $arr,
+        'subscriptions' => $s->get_subsriptions(),
+        'default_subreddits' => $s->get_default_subreddits(),
+        'page_title' => 'Subscriptions',
+        'async_load' => false
+    ]);
+});
+
+
+$router->delete($base_url . '/subscriptions', function (ServerRequest $request) use ($t, $r, $s, $is_content_fetch) {
+    $subreddit_id = $request->getQueryParams()['s'] ?? '';
+    $s->remove_subscription($subreddit_id);
+    return $t->render('subscriptions', [
+        'subscriptions' => $s->get_subsriptions(),
+        'default_subreddits' => $s->get_default_subreddits(),
         'page_title' => 'Subscriptions',
         'async_load' => false
     ]);

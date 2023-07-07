@@ -10,6 +10,7 @@
     {{-- <script src="//cdn.dashjs.org/latest/dash.all.debug.js"></script> --}}
     <link rel="stylesheet" href="//cdn.plyr.io/3.7.8/plyr.css" />
     <meta name="mobile-web-app-capable" content="yes">
+    <script src="https://cdn.tailwindcss.com"></script>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Apol">
     <meta name="apple-mobile-web-app-title" content="Apol">

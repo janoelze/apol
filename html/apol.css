@@ -265,7 +265,6 @@ a {
     padding: 40px 0;
     align-items: center;
     justify-content: center;
-    color: #616269;
 }
 
 .sections {
@@ -286,6 +285,12 @@ a {
 
 
 /* generic-list */
+
+.list-header {
+    font-weight: 500;
+    font-size: 17px;
+    margin: 0 0 0.35em 0;
+}
 
 .generic-list {
     display: flex;
@@ -366,6 +371,7 @@ a {
     height: 50px;
     z-index: 2000;
 }
+
 .thing.t1.collapsed>.comment-body .body,
 .thing.t1.collapsed>.replies {
     display: none;
@@ -376,4 +382,33 @@ a {
 
 .thing.t3 .plyr--video {
     border-radius: var(--border-radius);
+}
+
+/* subscription-form */
+
+.form-wrapper {
+    border-radius: calc(var(--border-radius) * 2);
+    overflow: hidden;
+}
+
+.subscription-form {
+    display: flex;
+    gap: 10px;
+    padding: 20px;
+    justify-content: space-between;
+}
+
+.input-field {
+    display: flex;
+    gap: 5px;
+}
+
+.input-field.fill {
+    width: 100%;
+}
+
+.input-field input {
+    width: 100%;
+    background-color: transparent;
+    border: 0;
 }
