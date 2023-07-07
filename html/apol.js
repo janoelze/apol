@@ -174,6 +174,7 @@ function getVisibleVideos() {
 class VideoMgr {
 	constructor() {
 		this.playerRefs = {};
+		this.audioRefs = {};
 		this.uninitiatedVideos = [];
 		this.visibleVideos = [];
 		this.invisibleVideos = [];
@@ -209,10 +210,10 @@ class VideoMgr {
 		});
 	}
 	initiateVideo(video) {
+		let self = this;
 		let videoId = video.getAttribute("id");
-		let isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
-		// isiOS = false;
+		let isiOS =
+			/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
 		console.log("initiating", videoId);
 
@@ -225,7 +226,7 @@ class VideoMgr {
 		let hasAudio = video.getAttribute("data-has-audio") === "1";
 
 		let controls = ["play", "progress", "current-time"];
-		
+
 		if (hasAudio) {
 			controls.push("mute");
 		}
@@ -238,34 +239,44 @@ class VideoMgr {
 		});
 
 		console.log("videoId", this.playerRefs[videoId].elements);
-
 		console.log("isiOS", isiOS);
 
+		let playerSources = [];
+
 		if (isiOS) {
-			this.playerRefs[videoId].source = {
-				type: "video",
-				title: videoId,
-				poster: posterUrl,
-				sources: [
-					{
-						src: hlsUrl,
-						type: "application/x-mpegURL",
-					},
-				],
-			};
-		}else{
-			this.playerRefs[videoId].source = {
-				type: "video",
-				title: videoId,
-				poster: posterUrl,
-				sources: [
-					{
-						src: mp4Url,
-						type: "video/mp4",
-					},
-				],
-			};
+			playerSources.push({
+				src: hlsUrl,
+				type: "application/x-mpegURL",
+			});
+		} else {
+			playerSources.push({
+				src: mp4Url,
+				type: "video/mp4",
+				playsinline: true,
+			});
+
+			if(hasAudio){
+				// ["240", "360", "720", "1080"].forEach(s => {
+				// 	if(mp4Url.includes(s)){
+				// 		this.audioRefs[videoId] = new Audio();
+				// 		this.audioRefs[videoId].src = mp4Url.replace(s, "audio");
+				// 		this.playerRefs[videoId].on("play", function () {
+				// 			self.audioRefs[videoId].play();
+				// 		});
+				// 		this.playerRefs[videoId].on("pause", function () {
+				// 			self.audioRefs[videoId].pause();
+				// 		});
+				// 	}
+				// });
+			}
 		}
+
+		this.playerRefs[videoId].source = {
+			type: "video",
+			title: videoId,
+			poster: posterUrl,
+			sources: playerSources,
+		};
 
 		let containerEl = this.playerRefs[videoId].elements.container;
 		containerEl.style.aspectRatio = `${videoWidth}/${videoHeight}`;
