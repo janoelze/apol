@@ -12,6 +12,7 @@ use MiladRahimi\PhpRouter\Routing\Route;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Cake\Cache\Cache;
+use Helpers as GlobalHelpers;
 
 // config
 
@@ -72,6 +73,10 @@ class Helpers
         $query = http_build_query($existing_params);
         $updated_url = $url_parts['path'] . '?' . $query;
         return $updated_url;
+    }
+    public static function ends_with($str, $substr)
+    {
+        return substr($str, -strlen($substr)) == $substr;
     }
     public static function get_embeddable_video($data)
     {
@@ -337,14 +342,36 @@ $router = Router::create();
 $is_content_fetch = isset($_GET['fetch']);
 
 $router->get($base_url . '.*', function (ServerRequest $request) use ($t, $s, $r, $is_content_fetch) {
+    global $base_url;
+
     $data = [];
 
-    $url_path = $request->getUri()->getPath();
+    $page_path =
+        rtrim($request->getUri()->getPath(), '/');
+
+    if (strpos($page_path, '/apol') === 0) {
+        $page_path = substr($page_path, 5);
+    }
+
+    // $reddit_string = "/r/home";
+
+    if (empty($page_path)) {
+        $page_path = '/r/home';
+    }
+    if ($page_path == sprintf('%s/', $base_url)) {
+        $page_path = '/r/home';
+    }
+    if ($page_path == sprintf('%s/r', $base_url)) {
+        $page_path = '/r/home';
+    }
+
+    $is_home_feed = Helpers::ends_with($page_path, '/r/home');
+    $url_path = $page_path;
     $url_params = $request->getQueryParams();
     $subreddit_id = Helpers::extract_subreddit_id();
     $page_title = sprintf('r/%s', $subreddit_id);
 
-    if($request->getUri()->getPath() == '/r/home'){
+    if ($is_home_feed) {
         $arr = $s->get_subsriptions();
         $multireddit_string = implode('+', $arr);
         $url_path = sprintf('/r/%s.json', $multireddit_string);
@@ -359,8 +386,7 @@ $router->get($base_url . '.*', function (ServerRequest $request) use ($t, $s, $r
         }
     }
 
-    $path = $path ?? '/r/all';
-    $is_comments_page = strpos($request->getUri()->getPath(), '/comments/') !== false;
+    $is_comments_page = strpos($page_path, '/comments/') !== false;
 
     if (isset($data['kind']) && $data['kind'] == 'Listing') {
         $data = [$data];
@@ -369,7 +395,7 @@ $router->get($base_url . '.*', function (ServerRequest $request) use ($t, $s, $r
     return $t->render('page', [
         'data' => $data,
         'async_load' => true,
-        'page_title' => $page_title,
+        'page_title' => $page_path,
         'is_content_fetch' => $is_content_fetch,
         'subreddit_id' => $subreddit_id,
         'is_comments_page' => $is_comments_page,
