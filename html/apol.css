@@ -139,6 +139,10 @@ a {
     gap: 10px;
 }
 
+.md {
+    line-height: 1.26em;
+}
+
 .md p,
 .md blockquote {
     margin: 0.75em 0 0 0;

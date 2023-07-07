@@ -388,6 +388,10 @@ $router->get($base_url . '.*', function (ServerRequest $request) use ($t, $s, $r
 
     $is_comments_page = strpos($page_path, '/comments/') !== false;
 
+    if($is_comments_page){
+        $page_title = 'Comments';
+    }
+
     if (isset($data['kind']) && $data['kind'] == 'Listing') {
         $data = [$data];
     }
@@ -395,7 +399,7 @@ $router->get($base_url . '.*', function (ServerRequest $request) use ($t, $s, $r
     return $t->render('page', [
         'data' => $data,
         'async_load' => true,
-        'page_title' => $page_path,
+        'page_title' => $page_title,
         'is_content_fetch' => $is_content_fetch,
         'subreddit_id' => $subreddit_id,
         'is_comments_page' => $is_comments_page,

@@ -1,8 +1,12 @@
 @php
-  //var_dump($data);
+  $collapse_class = '';
+
+  if(isset($data['author']) && $data['author'] == 'AutoModerator') {
+    $collapse_class = 'collapsed';
+  }
 @endphp
 
-<div class="thing t1">
+<div class="thing t1 {{ $collapse_class }}">
   @if($data['author'] ?? false)
     <div class="comment-body tint-bg-down-3 tint-fg-up-51">
       <div class="meta">
