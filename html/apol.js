@@ -44,9 +44,7 @@ function initFormAutoSave() {
 	let forms = document.querySelectorAll("form.autosave");
 
 	forms.forEach(function (form) {
-		console.log("form", form);
 		form.addEventListener("change", function (event) {
-			console.log("change");
 			htmx.ajax(form);
 		});
 	});
@@ -238,9 +236,6 @@ class VideoMgr {
 			autoplay: true,
 		});
 
-		console.log("videoId", this.playerRefs[videoId].elements);
-		console.log("isiOS", isiOS);
-
 		let playerSources = [];
 
 		if (isiOS) {
@@ -255,7 +250,7 @@ class VideoMgr {
 				playsinline: true,
 			});
 
-			if(hasAudio){
+			if (hasAudio) {
 				// ["240", "360", "720", "1080"].forEach(s => {
 				// 	if(mp4Url.includes(s)){
 				// 		this.audioRefs[videoId] = new Audio();
@@ -327,11 +322,41 @@ function onLoad() {
 	if (!window.videoMgrRef) {
 		window.videoMgrRef = new VideoMgr();
 	}
+	if (!window.rowClickMgrRef) {
+		window.rowClickMgrRef = new RowClickMgr();
+	}
+}
+
+class RowClickMgr {
+	constructor() {
+		this.init();
+	}
+	handleRowClick(e) {
+		let url = e.currentTarget.dataset.url;
+		let classString = e.target.className || "";
+
+		if (classString.includes("plyr")) {
+			return;
+		}
+
+		window.location.href = url;
+	}
+	init() {
+		let rows = document.querySelectorAll(".thing[data-url]");
+		rows.forEach((row) => {
+			if (row.dataset.isInitialized ?? false) {
+				return;
+			}
+			row.dataset.isInitialized = true;
+			row.addEventListener("click", this.handleRowClick.bind(this));
+		});
+	}
 }
 
 function afterSwap() {
 	window.videoMgrRef = new VideoMgr();
 	window.commentsMgrRef = new CommentsMgr();
+	window.rowClickMgrRef = new RowClickMgr();
 }
 
 window.addEventListener("DOMContentLoaded", onLoad);

@@ -87,6 +87,14 @@ a {
     line-height: 1.37em;
 }
 
+.thing.t3 .subreddit {
+    /* font-size: 12px; */
+}
+
+.text-semibold {
+    font-weight: 500;
+}
+
 .thing.t3 .url {
     display: flex;
     flex-direction: row;

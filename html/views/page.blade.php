@@ -11,7 +11,12 @@
                         @php
                             $is_last = $key == count($entry['data']['children']) - 1 && !$is_comments_page;
                         @endphp
-                        @include('partials.post', ['data' => $value['data'], 'is_last' => $is_last, 'is_comments_page' => $is_comments_page])
+                        @include('partials.post', [
+                            'data' => $value['data'],
+                            'is_last' => $is_last,
+                            'subreddit_id' => $subreddit_id,
+                            'is_comments_page' => $is_comments_page
+                        ])
                     @endforeach
                     @if(!$is_comments_page)
                         <div class="loading-indicator"><span class="tint-fg-up-16">Loading...</span></div>

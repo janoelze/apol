@@ -92,9 +92,9 @@ class Helpers
     {
         return [
             [
-                'href' => self::get_base_url() . '/r/all',
+                'href' => self::get_base_url() . '/r/home',
                 'icon' => __DIR__ . '/img/home.svg',
-                'active' => self::url_includes('r/all'),
+                'active' => self::url_includes('r/home'),
                 'label' => 'Home',
             ],
             [
@@ -245,7 +245,11 @@ class Subscriptions
     }
     public function get_subsriptions()
     {
-        return $this->subscriptions;
+        $arr = $this->subscriptions;
+        if (empty($arr)) {
+            $arr = json_decode(file_get_contents('./default-subreddits.json'), true);
+        }
+        return $arr;
     }
     public function add_subscription($subreddit)
     {
@@ -332,52 +336,21 @@ $base_url = Helpers::get_base_url();
 $router = Router::create();
 $is_content_fetch = isset($_GET['fetch']);
 
-$router->get($base_url . '.*', function (ServerRequest $request) use ($t, $r, $is_content_fetch) {
+$router->get($base_url . '.*', function (ServerRequest $request) use ($t, $s, $r, $is_content_fetch) {
     $data = [];
 
-    $path = $request->getUri()->getPath();
-    $query_params = $request->getQueryParams();
-
-    if ($is_content_fetch) {
-        $data = $r->get($path, $query_params);
-        if (isset($data['error'])) {
-            return new JsonResponse($data);
-        }
-    }
-
-    $path = $path ?? '/r/all';
-    $is_comments_page = strpos($path, '/comments/') !== false;
-    $subreddit_id = Helpers::extract_subreddit_id();
-
-    if (isset($data['kind']) && $data['kind'] == 'Listing') {
-        $data = [$data];
-    }
-
-    return $t->render('page', [
-        'data' => $data,
-        'async_load' => true,
-        'page_title' => sprintf('r/%s', $subreddit_id),
-        'is_content_fetch' => $is_content_fetch,
-        'subreddit_id' => $subreddit_id,
-        'is_comments_page' => $is_comments_page,
-    ]);
-});
-
-$router->get($base_url . '/r/feed', function (ServerRequest $request) use ($t, $r, $s, $is_content_fetch) {
-    $arr = $s->get_subsriptions();
-
-    if (empty($arr)) {
-        $arr = json_decode(file_get_contents('./default-subreddits.json'), true);
-    }
-
-    $multireddit_string = implode('+', $arr);
-
-    $url_path = sprintf('/r/%s/.json', $multireddit_string);
+    $url_path = $request->getUri()->getPath();
     $url_params = $request->getQueryParams();
+    $subreddit_id = Helpers::extract_subreddit_id();
+    $page_title = sprintf('r/%s', $subreddit_id);
 
-    var_dump($url_path);
-
-    $data = [];
+    if($request->getUri()->getPath() == '/r/home'){
+        $arr = $s->get_subsriptions();
+        $multireddit_string = implode('+', $arr);
+        $url_path = sprintf('/r/%s.json', $multireddit_string);
+        $url_params = $request->getQueryParams();
+        $page_title = 'Home';
+    }
 
     if ($is_content_fetch) {
         $data = $r->get($url_path, $url_params);
@@ -386,13 +359,20 @@ $router->get($base_url . '/r/feed', function (ServerRequest $request) use ($t, $
         }
     }
 
+    $path = $path ?? '/r/all';
+    $is_comments_page = strpos($request->getUri()->getPath(), '/comments/') !== false;
+
+    if (isset($data['kind']) && $data['kind'] == 'Listing') {
+        $data = [$data];
+    }
+
     return $t->render('page', [
         'data' => $data,
         'async_load' => true,
-        'page_title' => 'Home',
+        'page_title' => $page_title,
         'is_content_fetch' => $is_content_fetch,
-        'subreddit_id' => 'home',
-        'is_comments_page' => false,
+        'subreddit_id' => $subreddit_id,
+        'is_comments_page' => $is_comments_page,
     ]);
 });
 
