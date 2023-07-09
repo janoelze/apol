@@ -396,6 +396,10 @@ $router->get(BASE_URL . '.*', function (ServerRequest $request) use ($t, $s, $r,
 
     $is_comments_page = strpos($reddit_url, '/comments/') !== false;
 
+    if($is_comments_page){
+        $page_title = 'Comments';
+    }
+
     if (isset($data['kind']) && $data['kind'] == 'Listing') {
         $data = [$data];
     }
@@ -434,10 +438,20 @@ $router->post(BASE_URL . '/subscriptions', function (ServerRequest $request) use
     ]);
 });
 
-
 $router->delete(BASE_URL . '/subscriptions', function (ServerRequest $request) use ($t, $r, $s, $is_content_fetch) {
     $subreddit_id = $request->getQueryParams()['s'] ?? '';
     $s->remove_subscription($subreddit_id);
+    return $t->render('subscriptions', [
+        'subscriptions' => $s->get_subsriptions(),
+        'default_subreddits' => $s->get_default_subreddits(),
+        'page_title' => 'Subscriptions',
+        'async_load' => false
+    ]);
+});
+
+$router->put(BASE_URL . '/subscriptions', function (ServerRequest $request) use ($t, $r, $s, $is_content_fetch) {
+    $subreddit_id = $request->getQueryParams()['s'] ?? '';
+    $s->add_subscription($subreddit_id);
     return $t->render('subscriptions', [
         'subscriptions' => $s->get_subsriptions(),
         'default_subreddits' => $s->get_default_subreddits(),
