@@ -5,35 +5,39 @@
 @section('content')
     <div class="sections" id="subscriptions">
 
-        <div class="bg-gray-900 rounded-lg">
-            <ul class="">
-                @foreach ($subscriptions as $subreddit)
-                    <li class="flex items-center justify-between px-5 py-4">
-                        <a href="{{ Helpers::get_base_url() }}/r/{{ $subreddit }}" class="text-md">{{ $subreddit }}</a>
-                        <button class="" hx-delete="/subscriptions?s={{ $subreddit }}" hx-target="#subscriptions" hx-swap="outerHTML" hx-select="#subscriptions">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                    </li>
-                @endforeach
-            </ul>
-        </div>
+        <h3 class="tint-fg-up-25 list-header">Subscribed Subreddits</h3>
 
-        <h3 class="tint-fg-up-35 list-header">Subscriptions</h3>
+        
+
 
         @if(count($subscriptions))
-            <div class="generic-list">
-                @foreach ($subscriptions as $subreddit)
-                    <a class="tint-bg-down-2 tint-fg-up-58" href="{{ Helpers::get_base_url() }}/r/{{ $subreddit }}">/r/{{ $subreddit }}</a>
-                @endforeach
+            <div class="rounded-lg">
+                <ul class="">
+                    @foreach ($subscriptions as $subreddit)
+                        <li class="flex items-center justify-between my-1 px-5 py-4 tint-bg-down-2 rounded-lg">
+                            <a href="{{ Helpers::get_base_url() }}/r/{{ $subreddit }}" class="text-md">{{ $subreddit }}</a>
+                            <button class="" hx-delete="/subscriptions?s={{ $subreddit }}" hx-target="#subscriptions" hx-swap="outerHTML" hx-select="#subscriptions">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </li>
+                    @endforeach
+                </ul>
             </div>
         @else
-            {!! var_dump($_POST) !!}
-            <div class="section empty tint-bg-down-2 tint-fg-up-20">{{ rand(0,1000) }} You are not subscribed to any subreddits.</div>
+            <div class="rounded-lg">
+                <ul class="">
+                    <li class="flex items-center justify-between px-5 py-4 tint-bg-down-2">
+                        You are not subscribed to any subreddits.
+                    </li>
+                </ul>
+            </div>
+            {{-- {!! var_dump($_POST) !!} --}}
+            {{-- <div class="section empty tint-bg-down-2 tint-fg-up-20">{{ rand(0,1000) }} You are not subscribed to any subreddits.</div> --}}
         @endif
 
-        <div class="form-wrapper tint-bg-down-2">
+        {{-- <div class="form-wrapper tint-bg-down-2">
             <form class="subscription-form" hx-post="/subscriptions" hx-select="#subscriptions" hx-target="#subscriptions" hx-swap="outerHTML">
                 <div class="input-field fill">
                     <span>r/</span>
@@ -43,26 +47,20 @@
                     <button type="submit">Subscribe</button>
                 </div>
             </form>
-        </div>
+        </div> --}}
 
-        <h3 class="tint-fg-up-35 list-header">Suggested subreddits</h3>
+        <h3 class="tint-fg-up-25 list-header">Default Subreddits</h3>
 
         @if(count($default_subreddits))
-            <div class="generic-list">
-                @foreach ($default_subreddits as $subreddit)
-                    <a class="tint-bg-down-2 tint-fg-up-58" href="{{ Helpers::get_base_url() }}/r/{{ $subreddit }}">/r/{{ $subreddit }}</a>
-                @endforeach
+            <div class="rounded-lg">
+                <ul class="">
+                    @foreach ($default_subreddits as $subreddit)
+                        <li class="flex items-center justify-between my-1 px-5 py-4 tint-bg-down-2 rounded-lg">
+                            <a href="{{ Helpers::get_base_url() }}/r/{{ $subreddit }}" class="text-md">{{ $subreddit }}</a>
+                        </li>
+                    @endforeach
+                </ul>
             </div>
-        @else
-            <div class="section empty tint-bg-down-2 tint-fg-up-20">You are not subscribed to any subreddits.</div>
         @endif
-
-        <div class="section">
-            {{-- <form hx-post="/subscriptions" hx-target="body" hx-swap="outerHTML">
-                <textarea name="subscriptions" required rows="5"></textarea>
-                <button type="submit">Subscribe</button>
-            </form> --}}
-        </div>
-
     </div>
 @endsection

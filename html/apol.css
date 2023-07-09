@@ -288,8 +288,9 @@ a {
 
 .list-header {
     font-weight: 500;
-    font-size: 17px;
-    margin: 0 0 0.35em 0;
+    font-size: 14px;
+    text-transform: uppercase;
+    margin: 1em 0 0em 0;
 }
 
 .generic-list {

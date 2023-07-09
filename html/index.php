@@ -16,6 +16,11 @@ use Helpers as GlobalHelpers;
 
 // config
 
+define(
+    'BASE_URL',
+    Env::get('base_url')
+);
+
 Cache::setConfig('default', [
     'className' => 'File',
     'duration' => '+2 minutes',
@@ -29,6 +34,14 @@ foreach (glob(__DIR__ . '/blade-cache/*.php') as $filename) {
 
 class Helpers
 {
+    public static function get_normalized_reddit_path()
+    {
+        $url = $_SERVER['REQUEST_URI'];
+        $url = explode('?', $url)[0];
+        $url = rtrim($url, '/');
+        $url = ltrim($url, BASE_URL);
+        return $url;
+    }
     public static function relative_time($unix_ts)
     {
         $diff = time() - $unix_ts;
@@ -213,11 +226,8 @@ class RedditProxy
     }
     public function get($path, $query_params = [])
     {
-        if (strpos($path, '/apol') === 0) {
-            $path = substr($path, 5);
-        }
         $params_encoded = http_build_query($query_params);
-        $url = sprintf('https://old.reddit.com%s.json?%s', $path, $params_encoded);
+        $url = sprintf('https://old.reddit.com/%s.json?%s', $path, $params_encoded);
         return $this->request($url);
     }
 }
@@ -245,7 +255,8 @@ class Subscriptions
     }
     public function persist()
     {
-        $cookie_contents = json_encode($this->subscriptions);
+        $s = array_unique($this->subscriptions);
+        $cookie_contents = json_encode($s);
         setcookie('subsriptions', $cookie_contents, time() + (86400 * 30), "/");
     }
     public function get_default_subreddits()
@@ -268,6 +279,15 @@ class Subscriptions
             return $item != $subreddit;
         });
         $this->persist();
+    }
+}
+
+class Env
+{
+    static function get($key)
+    {
+        $env = json_decode(file_get_contents(__DIR__ . '/env.json'), true);
+        return $env[$key];
     }
 }
 
@@ -340,7 +360,6 @@ $t = new Template();
 $r = new RedditProxy();
 $us = new UserSettings();
 $s = new Subscriptions();
-$base_url = Helpers::get_base_url();
 
 // defaults
 
@@ -349,56 +368,33 @@ $base_url = Helpers::get_base_url();
 $router = Router::create();
 $is_content_fetch = isset($_GET['fetch']);
 
-$router->get($base_url . '.*', function (ServerRequest $request) use ($t, $s, $r, $is_content_fetch) {
-    global $base_url;
-
+$router->get(BASE_URL . '.*', function (ServerRequest $request) use ($t, $s, $r, $is_content_fetch) {
     $data = [];
-
-    $page_path =
-        rtrim($request->getUri()->getPath(), '/');
-
-    if (strpos($page_path, '/apol') === 0) {
-        $page_path = substr($page_path, 5);
-    }
-
-    // $reddit_string = "/r/home";
-
-    if (empty($page_path)) {
-        $page_path = '/r/home';
-    }
-    if ($page_path == sprintf('%s/', $base_url)) {
-        $page_path = '/r/home';
-    }
-    if ($page_path == sprintf('%s/r', $base_url)) {
-        $page_path = '/r/home';
-    }
-
-    $is_home_feed = Helpers::ends_with($page_path, '/r/home');
-    $url_path = $page_path;
     $url_params = $request->getQueryParams();
-    $subreddit_id = Helpers::extract_subreddit_id();
-    $page_title = sprintf('r/%s', $subreddit_id);
+    $reddit_url = Helpers::get_normalized_reddit_path();
+    $reddit_url = ltrim($reddit_url, '/');
+    $page_title = $reddit_url;
 
-    if ($is_home_feed) {
-        $arr = $s->get_subsriptions();
-        $multireddit_string = implode('+', $arr);
-        $url_path = sprintf('/r/%s.json', $multireddit_string);
-        $url_params = $request->getQueryParams();
+    if (empty($reddit_url) || $reddit_url == '/' || $reddit_url == '/r' || $reddit_url == 'r') {
+        $reddit_url = 'r/home';
+    }
+
+    $subreddit_id = Helpers::extract_subreddit_id();
+
+    if ($reddit_url == 'r/home') {
+        $multireddit_string = implode('+', $s->get_subsriptions());
+        $reddit_url = sprintf('r/%s', $multireddit_string);
         $page_title = 'Home';
     }
 
     if ($is_content_fetch) {
-        $data = $r->get($url_path, $url_params);
+        $data = $r->get($reddit_url, $url_params);
         if (isset($data['error'])) {
             return new JsonResponse($data);
         }
     }
 
-    $is_comments_page = strpos($page_path, '/comments/') !== false;
-
-    if ($is_comments_page) {
-        $page_title = 'Comments';
-    }
+    $is_comments_page = strpos($reddit_url, '/comments/') !== false;
 
     if (isset($data['kind']) && $data['kind'] == 'Listing') {
         $data = [$data];
@@ -414,7 +410,7 @@ $router->get($base_url . '.*', function (ServerRequest $request) use ($t, $s, $r
     ]);
 });
 
-$router->get($base_url . '/subscriptions', function (ServerRequest $request) use ($t, $r, $s, $is_content_fetch) {
+$router->get(BASE_URL . '/subscriptions', function (ServerRequest $request) use ($t, $r, $s, $is_content_fetch) {
     return $t->render('subscriptions', [
         'subscriptions' => $s->get_subsriptions(),
         'default_subreddits' => $s->get_default_subreddits(),
@@ -423,7 +419,7 @@ $router->get($base_url . '/subscriptions', function (ServerRequest $request) use
     ]);
 });
 
-$router->post($base_url . '/subscriptions', function (ServerRequest $request) use ($t, $r, $s, $is_content_fetch) {
+$router->post(BASE_URL . '/subscriptions', function (ServerRequest $request) use ($t, $r, $s, $is_content_fetch) {
     $post_data = $request->getParsedBody();
 
     if (isset($post_data['subreddit']) && !empty($post_data['subreddit'])) {
@@ -439,7 +435,7 @@ $router->post($base_url . '/subscriptions', function (ServerRequest $request) us
 });
 
 
-$router->delete($base_url . '/subscriptions', function (ServerRequest $request) use ($t, $r, $s, $is_content_fetch) {
+$router->delete(BASE_URL . '/subscriptions', function (ServerRequest $request) use ($t, $r, $s, $is_content_fetch) {
     $subreddit_id = $request->getQueryParams()['s'] ?? '';
     $s->remove_subscription($subreddit_id);
     return $t->render('subscriptions', [
@@ -450,7 +446,7 @@ $router->delete($base_url . '/subscriptions', function (ServerRequest $request) 
     ]);
 });
 
-$router->get($base_url . '/settings', function (ServerRequest $request) use ($t, $r, $s, $us, $is_content_fetch) {
+$router->get(BASE_URL . '/settings', function (ServerRequest $request) use ($t, $r, $s, $us, $is_content_fetch) {
     return $t->render('settings', [
         'page_title' => 'Settings',
         'settings' => $us->get_user_settings(),
@@ -458,7 +454,7 @@ $router->get($base_url . '/settings', function (ServerRequest $request) use ($t,
     ]);
 });
 
-$router->post($base_url . '/settings', function (ServerRequest $request) use ($us, $base_url) {
+$router->post(BASE_URL . '/settings', function (ServerRequest $request) use ($us) {
     foreach ($_POST as $key => $value) {
         $us->set_user_setting($key, $value);
     }
