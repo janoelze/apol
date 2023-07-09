@@ -36,12 +36,14 @@
             <div class="rounded-lg">
                 <ul class="">
                     @foreach ($default_subreddits as $subreddit)
-                        <li class="flex items-center justify-between my-1 px-5 py-4 tint-bg-down-2 rounded-lg">
-                            <a href="{{ Helpers::get_base_url() }}/r/{{ $subreddit }}" class="text-md">{{ $subreddit }}</a>
-                            <button class="tint-fg-up-25" hx-put="/subscriptions?s={{ $subreddit }}" hx-target="#subscriptions" hx-swap="outerHTML" hx-select="#subscriptions">
-                                Add
-                            </button>
-                        </li>
+                        @if(!in_array($subreddit, $subscriptions))
+                            <li class="flex items-center justify-between my-1 px-5 py-4 tint-bg-down-2 rounded-lg">
+                                <a href="{{ Helpers::get_base_url() }}/r/{{ $subreddit }}" class="text-md">{{ $subreddit }}</a>
+                                <button class="tint-fg-up-25" hx-put="/subscriptions?s={{ $subreddit }}" hx-target="#subscriptions" hx-swap="outerHTML" hx-select="#subscriptions">
+                                    Add
+                                </button>
+                            </li>
+                        @endif
                     @endforeach
                 </ul>
             </div>
