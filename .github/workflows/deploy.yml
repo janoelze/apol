@@ -19,9 +19,9 @@ jobs:
         ssh-private-key: ${{ secrets.PUB_KEY }}
     - name: Add remote to hosts file
       run: ssh-keyscan -H aquila.uberspace.de >> ~/.ssh/known_hosts
-    - name: Set base_url in env.json
-      run: ssh janoelze@aquila.uberspace.de 'echo "{\"base_url\": \"apol\"}" > /var/www/virtual/janoelze/endtime-instruments.org/apol/env.json'
     - name: Upload
       run: rsync -avzr --exclude 'data' --delete ${GITHUB_WORKSPACE}/html/ janoelze@aquila.uberspace.de:/var/www/virtual/janoelze/endtime-instruments.org/apol/
-    - name: Update .htaccess
+    - name: Update .htaccess for production
       run: ssh janoelze@aquila.uberspace.de "mv /var/www/virtual/janoelze/endtime-instruments.org/apol/.htaccess-prod /var/www/virtual/janoelze/endtime-instruments.org/apol/.htaccess"
+    - name: Update env.json for production
+      run: ssh janoelze@aquila.uberspace.de "mv /var/www/virtual/janoelze/endtime-instruments.org/apol/env-prod.json /var/www/virtual/janoelze/endtime-instruments.org/apol/env.json"
